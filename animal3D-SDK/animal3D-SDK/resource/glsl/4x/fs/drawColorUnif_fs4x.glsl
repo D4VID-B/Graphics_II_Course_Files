@@ -33,6 +33,5 @@ uniform vec4 uColor;
 
 void main()
 {
-
 	rtFragColor = uColor;
 }

@@ -33,6 +33,5 @@ in vec4 vColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
 	rtFragColor = vColor;
 }

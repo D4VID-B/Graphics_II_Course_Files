@@ -32,10 +32,12 @@
 //	5) assign vertex color input to varying
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 3) in vec4 aColor;
+
+out vec4 vColor;
+
 uniform mat4 uMVP;
 
-layout (location = 3) in vec4 aColor;
-out vec4 vColor;
 
 void main()
 {
