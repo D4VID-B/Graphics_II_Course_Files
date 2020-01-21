@@ -29,10 +29,10 @@
 //	2) assign uniform variable to output color
 
 out vec4 rtFragColor;
-in uniform color;
+uniform vec4 uColor;
 
 void main()
 {
 
-	rtFragColor = color;
+	rtFragColor = uColor;
 }
