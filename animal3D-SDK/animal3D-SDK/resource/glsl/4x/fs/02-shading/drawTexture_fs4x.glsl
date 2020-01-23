@@ -30,14 +30,13 @@
 //	3) sample texture using texture coordinate
 //	4) assign sample to output color
 
-uniform sampler2D uTex_sm;
+uniform sampler2D uImage0;
 
-in vec2 vCoord;
 out vec4 rtFragColor;
-in vec4 fragCoord;
+in vec4 coord;
 
 void main()
 {
 	
-	rtFragColor = texture(uTex_sm, vCoord.xy);
+	rtFragColor = texture(uImage0, coord.xy);
 }

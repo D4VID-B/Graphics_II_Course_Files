@@ -35,14 +35,15 @@
 
 layout (location = 0) in vec4 aPosition;
 layout (location = 8) in vec4 aTexCoord;
+
 uniform mat4 uMVP;
 
 uniform mat4 uAtlas; 
 
-out vec4 fragCoord;
+out vec4 coord;
 
 void main()
 {
-	fragCoord = uAtlas *  aTexCoord;
+	coord = uAtlas *  aTexCoord;
 	gl_Position = uMVP * aPosition;
 }
