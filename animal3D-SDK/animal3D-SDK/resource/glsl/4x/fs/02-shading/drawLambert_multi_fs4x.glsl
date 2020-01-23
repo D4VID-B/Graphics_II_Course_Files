@@ -34,12 +34,11 @@
 uniform vec4 uLightPos;
 uniform vec4 uLightCol;
 
+uniform vec4 ubPointLight;
+
 in vec4 csPos;
 
 out vec4 rtFragColor;
-
-uniform vec2 uLightPos;
-uniform vec4 uLightCol;
 
 in vec4 coord;
 in vec4 viewPos;
@@ -51,11 +50,14 @@ void main()
 {
 	
 	vec4 lNorm = normalize(uLightPos - coord);
-	//vec4 nNorm = normalize();
-	vec4 iDiff = transformedNormal * lNorm;
 
-	//vec4 vNorm = viewPos - coord;
+	float iDiff = max(dot(normalize(transformedNormal), lNorm), 0.0);
 
-	rtFragColor = iDiff * uLightCol;
-	//rtFragColor = texture(uImage0, coord.xy * (iDiff * uLightCol).xy); 
+	vec4 deffuse = iDiff * uLightCol;
+	vec4 objectColor = texture(uImage0, coord.xy);
+
+	vec4 result = deffuse * objectColor;
+	
+	rtFragColor = result;
+	
 }
