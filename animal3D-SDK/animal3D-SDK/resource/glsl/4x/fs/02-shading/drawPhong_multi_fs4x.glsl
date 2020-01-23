@@ -59,9 +59,12 @@ void main()
 	float iDiff = dot(normalize(transformedNormal), lNorm);
 
 	vec4 vNorm = normalize(viewPos - coord);
+	
 	//vec4 rNorm = 2 * dot(normalize(transformedNormal), lNorm) * (normalize(transformedNormal) - lNorm);
-	vec4 rNorm = reflect(-lNorm, transformedNormal);
 	//float iSpec = pow(dot(vNorm, rNorm), .5);
+
+	vec4 rNorm = reflect(-lNorm, transformedNormal);
+	
 	float iSpec = pow(max(dot(vNorm, rNorm), 0), 32);
 	vec4 spec = .5 * iSpec * uLightCol;
 
