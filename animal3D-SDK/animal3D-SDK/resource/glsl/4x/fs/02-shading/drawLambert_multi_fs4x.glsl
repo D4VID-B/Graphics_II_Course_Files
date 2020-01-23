@@ -42,6 +42,14 @@ in vec4 texCoord;
 
 out vec4 rtFragColor;
 
+uniform vec2 uLightPos;
+uniform vec4 uLightCol;
+
+in vec4 coord;
+in vec4 viewPos;
+in vec4 transformedNormal;
+
+
 void main()
 {
 	
