@@ -34,6 +34,7 @@ uniform sampler2D uTex_sm;
 
 in vec2 vCoord;
 out vec4 rtFragColor;
+in vec4 fragCoord;
 
 void main()
 {

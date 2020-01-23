@@ -34,16 +34,15 @@
 //	6) correctly transform input texture coordinate by atlas matrix
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 8) in vec4 aTexCoord;
 uniform mat4 uMVP;
 
-layout (location = 8) in vec4 aTexture;
-uniform mat4 uAtlas;
+uniform mat4 uAtlas; 
 
-out vec2 vCoord;
+out vec4 fragCoord;
 
 void main()
 {
-	vCoord = (uAtlas * aTexture).xy;
-
+	fragCoord = uAtlas *  aTexCoord;
 	gl_Position = uMVP * aPosition;
 }
