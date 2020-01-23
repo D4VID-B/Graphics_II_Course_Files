@@ -31,10 +31,43 @@
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
+uniform vec4 uLightPos;
+uniform vec4 uLightCol;
+
+uniform vec4 uLightCt;
+uniform vec4 uLightSz;
+uniform vec4 uColor;
+
+
+
+in vec4 csPos;
+
 out vec4 rtFragColor;
+
+in vec4 coord;
+in vec4 viewPos;
+in vec4 transformedNormal;
+
+uniform sampler2D uImage0;
+
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	
+	vec4 lNorm = normalize(uLightPos - coord);
+	//vec4 nNorm = normalize();
+	float iDiff = dot(normalize(transformedNormal), lNorm);
+
+	vec4 vNorm = normalize(viewPos - coord);
+	//vec4 rNorm = 2 * dot(normalize(transformedNormal), lNorm) * (normalize(transformedNormal) - lNorm);
+	vec4 rNorm = reflect(-lNorm, transformedNormal);
+	//float iSpec = pow(dot(vNorm, rNorm), .5);
+	float iSpec = pow(max(dot(vNorm, rNorm), 0), 32);
+	vec4 spec = .5 * iSpec * uLightCol;
+
+	float iPhong = iDiff + iSpec + .5;
+	vec4 phong = iPhong * spec;
+	//rtFragColor = uColor;
+	rtFragColor = (phong) * texture(uImage0, coord.xy); 
 }
+
