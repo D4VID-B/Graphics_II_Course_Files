@@ -33,16 +33,17 @@
 
 out vec4 rtFragColor;
 
+
 uniform vec2 uLightPos;
 uniform vec4 uLightCol;
 
 in vec4 coord;
 in vec4 viewPos;
 in vec4 transformedNormal;
-
+uniform sampler2D uImage0;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	
+	
 }
