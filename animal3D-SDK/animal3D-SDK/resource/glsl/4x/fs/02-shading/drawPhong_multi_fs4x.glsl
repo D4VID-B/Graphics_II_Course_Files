@@ -71,6 +71,8 @@ void main()
 	float iPhong = iDiff + iSpec + .5;
 	vec4 phong = iPhong * spec;
 	//rtFragColor = uColor;
-	rtFragColor = (phong) * texture(uImage0, coord.xy); 
+	//rtFragColor = (phong) * texture(uImage0, coord.xy); 
+
+	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0); 
 }
 
