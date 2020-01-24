@@ -31,16 +31,14 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
-uniform vec4 uLightPos;
-uniform vec4 uLightCol;
+uniform vec4 uLightPos[];
+uniform vec4 uLightCol[];
 
 uniform vec4 ubPointLight;
 
-uniform vec4 uLightCt;
-uniform vec4 uLightSz;
+uniform int uLightCt;
+
 uniform vec4 uColor;
-
-
 
 in vec4 csPos;
 
@@ -52,19 +50,32 @@ in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
+vec4 getNormal()
+{
+vec4 normal;
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		normal += normalize(uLightPos[i] - coord);
+	}
+
+
+return normal;
+}
 
 void main()
 {
 	
-	vec4 lNorm = normalize(uLightPos - coord);
+	vec4 lNorm = getNormal();
 
-	float iDiff = max(dot(normalize(transformedNormal), lNorm), 0.0);
+	float iDiff = dot(normalize(transformedNormal), lNorm);
 
-	vec4 deffuse = iDiff * uLightCol;
+	vec4 deffuse = iDiff * uLightCol[0];
+
 	vec4 objectColor = texture(uImage0, coord.xy);
 
 	vec4 result = deffuse * objectColor;
-	
+
 	rtFragColor = result;
 	
 }

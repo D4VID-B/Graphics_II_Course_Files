@@ -49,15 +49,14 @@ uniform mat4 uAtlas;
 
 
 out vec4 coord;
-
 out vec4 viewPos;
 out vec4 transformedNormal;
 
 void main()
 {
-	viewPos = uP* uMV * aPosition;
+	viewPos = uMV * aPosition;
 	transformedNormal = uMV_nrm * aNormal;
 	coord = uAtlas *  aTexCoord;
 
-	gl_Position = viewPos;
+	gl_Position = uP* viewPos;
 }

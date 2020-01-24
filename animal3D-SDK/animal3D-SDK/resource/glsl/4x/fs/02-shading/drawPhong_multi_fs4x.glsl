@@ -31,46 +31,65 @@
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
-uniform vec4 uLightPos;
-uniform vec4 uLightCol;
+uniform vec4 uLightPos[];
+uniform vec4 uLightCol[];
 
-uniform vec4 uLightCt;
-uniform vec4 uLightSz;
+uniform int uLightCt;
 uniform vec4 uColor;
 
-
-
-in vec4 csPos;
 
 out vec4 rtFragColor;
 
 in vec4 coord;
+in vec4 csPos;
 in vec4 viewPos;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
+vec4 getPointLight(vec4 lightPos, vec4 iNormal, vec4 pos)
+{
+vec4 normal;
+
+vec4 dir = normalize(lightPos - pos);
+	
+vec4 diff = max(dot(iNormal, dir), 0.0) * uColor;
+
+vec4 reflectDir = reflect(-dir, iNormal);
+
+float spec = pow(max(dot(csPos, reflectDir), 0), 0.5);
+
+normal += .5 + diff + spec;
+
+return normal;
+}
+
 
 void main()
 {
 	
-	vec4 lNorm = normalize(uLightPos - coord);
-	//vec4 nNorm = normalize();
-	float iDiff = dot(normalize(transformedNormal), lNorm);
+//	vec4 lNorm = getPointLight();
+//
+//	float iDiff = dot(normalize(transformedNormal), lNorm);
+//
+//	vec4 vNorm = normalize(viewPos - coord);
+//
+//	vec4 rNorm = reflect(-lNorm, transformedNormal);
+//	
+//	float iSpec = pow(max(dot(vNorm, rNorm), 0), 32);
+vec4 iPhong;
 
-	vec4 vNorm = normalize(viewPos - coord);
-	
-	//vec4 rNorm = 2 * dot(normalize(transformedNormal), lNorm) * (normalize(transformedNormal) - lNorm);
-	//float iSpec = pow(dot(vNorm, rNorm), .5);
+//for (int i = 0; i < uLightCt; i++)
+//{
+//	iPhong += getPointLight(uLightPos[i], transformedNormal, coord);
+//}
 
-	vec4 rNorm = reflect(-lNorm, transformedNormal);
-	
-	float iSpec = pow(max(dot(vNorm, rNorm), 0), 32);
-	vec4 spec = .5 * iSpec * uLightCol;
+//iPhong += getPointLight(uLightPos[0], transformedNormal, coord);
+//iPhong += getPointLight(uLightPos[1], transformedNormal, coord);	
+//iPhong += getPointLight(uLightPos[2], transformedNormal, coord);
+//iPhong += getPointLight(uLightPos[3], transformedNormal, coord);
 
-	float iPhong = iDiff + iSpec + .5;
-	vec4 phong = iPhong * spec;
-	//rtFragColor = uColor;
-	rtFragColor = (phong) * texture(uImage0, coord.xy); 
+	rtFragColor = iPhong;
+	//rtFragColor = (iPhong) * texture(uImage0, coord.xy); 
 }
 
