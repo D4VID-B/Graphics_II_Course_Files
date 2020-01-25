@@ -72,13 +72,18 @@ void main()
 	vec4 result = vec4(0, 0, 0, 0);
 
     // phase 2: Point lights
-    for(int i = 0; i < 2; i++)
-		getLight(uLightCol[i], uLightPos[i], objectColor);    
+    //for(int i = 0; i < 2; i++)
+		//getLight(uLightCol[i], uLightPos[i], objectColor);    
+		
+		//result += getLight(uLightCol[0], uLightPos[0], objectColor);    
+		//result += getLight(uLightCol[1], uLightPos[1], objectColor);    
+		//result += getLight(uLightCol[2], uLightPos[2], objectColor);    
+		//result += getLight(uLightCol[3], uLightPos[3], objectColor);    
 
 	rtFragColor = result;
 	
 	//rtFragColor = getLight(uLightCol[4], uLightPos[4], objectColor);
-	//rtFragColor = ;
-	//rtFragColor = ;
+
+
 }
 
