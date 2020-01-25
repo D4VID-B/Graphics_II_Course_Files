@@ -54,6 +54,8 @@ uniform sampler2D uImage0;
 
 vec4 getLight(vec4 lightCol, vec4 lightPos, vec4 objectColor)
 {
+
+
 	vec4 lNorm = normalize(lightPos - coord);
 
 	float iDiff = max(dot(normalize(transformedNormal), lNorm), 0.0);
@@ -62,7 +64,8 @@ vec4 getLight(vec4 lightCol, vec4 lightPos, vec4 objectColor)
 
 	vec4 result = deffuse * objectColor;
 
-	return deffuse;
+	return result;
+
 
 }
 
@@ -71,16 +74,30 @@ void main()
 {
 	vec4 objectColor = texture(uImage0, coord.xy);
 
-	vec4 result = vec4(0, 0, 0, 0);
+	vec4 sumOfColors = vec4(0, 0, 0, 0);
 
-    // phase 2: Point lights
-    for(int i = 0; i < 2; i++)
-		getLight(uLightCol[i], uLightPos[i], objectColor);    
-
-	rtFragColor = result;
 	
-	//rtFragColor = getLight(uLightCol[4], uLightPos[4], objectColor);
-	//rtFragColor = ;
-	//rtFragColor = ;
+	/*
+    // Since non constant indexis aren't allowed for array access in GLSL this breaks everything
+    for(int lightNum = 0; lightNum < uLightCt; lightNum++)
+		getLight(uLightCol[lightNum], uLightPos[lightNum], objectColor);   */
+
+	if(uLightCt > 0){
+		sumOfColors += getLight(uLightCol[0], uLightPos[0], objectColor);
+	}
+	if(uLightCt > 1){
+		sumOfColors += getLight(uLightCol[1], uLightPos[1], objectColor);
+	}	
+
+	if(uLightCt > 2){
+		sumOfColors += getLight(uLightCol[2], uLightPos[2], objectColor);
+	}	
+
+	if(uLightCt > 3){
+		sumOfColors += getLight(uLightCol[3], uLightPos[3], objectColor);
+	}	
+
+	rtFragColor = sumOfColors;
+
 }
 
