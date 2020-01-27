@@ -80,8 +80,10 @@ void main()
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-		sumOfColors += getLight(uLightCol[i], uLightPos[i]) + getSpecular(uLightPos[i], 2) + .0001;
+		sumOfColors += getLight(uLightCol[i], uLightPos[i]) + getSpecular(uLightPos[i], 1);
 	}
+
+	sumOfColors += .5;
 
 	vec4 objectColor = texture(uImage0, texCoord.xy);
 
