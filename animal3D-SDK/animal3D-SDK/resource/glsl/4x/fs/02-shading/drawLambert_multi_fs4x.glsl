@@ -31,12 +31,11 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
-uniform vec4 uLightPos [];
-uniform vec4 uLightCol [];
+uniform vec4 uLightPos [4];
+uniform vec4 uLightCol [4];
 
 uniform int uLightCt;
 
-in vec4 csPos;
 in vec4 coord;
 in vec4 viewPos;
 in vec4 transformedNormal;
@@ -45,19 +44,16 @@ uniform sampler2D uImage0;
 
 out vec4 rtFragColor;
 
-vec4 getLight(vec4 lightCol, vec4 lightPos) //vec4 objectColor
+vec4 getLight(vec4 lightCol, vec4 lightPos)
 {
-	vec4 lightRay = lightPos - coord;
-	//vec4 lNorm = lightPos - coord;
+	vec4 lightRay = lightPos - viewPos;
 
 	vec4 n_lightRay = normalize(lightRay);
 
 	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
-	//float iDiff = dot(transformedNormal, lNorm);
 
 	vec4 result = diff_coef * lightCol;
-	//vec4 result = deffuse * objectColor;
-
+	
 	return result;
 }
 
@@ -67,16 +63,14 @@ void main()
 	
 	vec4 sumOfColors;	
 
-		sumOfColors += getLight(uLightCol[0], uLightPos[0]);
-		sumOfColors += getLight(uLightCol[1], uLightPos[1]);
-		sumOfColors += getLight(uLightCol[2], uLightPos[2]);
-		sumOfColors += getLight(uLightCol[3], uLightPos[3]);
+	for(int i = 0; i < uLightCt; i++)
+	{
+		sumOfColors += getLight(uLightCol[i], uLightPos[i]);
+	}
 
 	vec4 objectColor = texture(uImage0, coord.xy);
 
 	rtFragColor = objectColor * sumOfColors;
-	//rtFragColor =  vec4(1.0, 1.0, 1.0, 1.0);
-	rtFragColor = getLight(uLightCol[0], uLightPos[0]);
 
 }
 
