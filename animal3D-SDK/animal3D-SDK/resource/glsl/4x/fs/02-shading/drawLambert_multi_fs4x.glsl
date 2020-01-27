@@ -31,71 +31,52 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
-uniform vec4 [] uLightPos;
-uniform vec4 [] uLightCol;
-
-uniform vec4 ubPointLight;
+uniform vec4 uLightPos [];
+uniform vec4 uLightCol [];
 
 uniform int uLightCt;
 
-uniform vec4 uColor;
-
 in vec4 csPos;
-
-out vec4 rtFragColor;
-
 in vec4 coord;
 in vec4 viewPos;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
-vec4 getLight(vec4 lightCol, vec4 lightPos, vec4 objectColor)
+out vec4 rtFragColor;
+
+vec4 getLight(vec4 lightCol, vec4 lightPos) //vec4 objectColor
 {
+	vec4 lightRay = lightPos - coord;
+	//vec4 lNorm = lightPos - coord;
 
+	vec4 n_lightRay = normalize(lightRay);
 
-	vec4 lNorm = normalize(lightPos - coord);
+	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
+	//float iDiff = dot(transformedNormal, lNorm);
 
-	float iDiff = dot(normalize(transformedNormal), lNorm);
-
-	vec4 deffuse = iDiff * lightCol;
-
-	vec4 result = deffuse * objectColor;
+	vec4 result = diff_coef * lightCol;
+	//vec4 result = deffuse * objectColor;
 
 	return result;
-
-
 }
 
 
 void main()
 {
+	
+	vec4 sumOfColors;	
+
+		sumOfColors += getLight(uLightCol[0], uLightPos[0]);
+		sumOfColors += getLight(uLightCol[1], uLightPos[1]);
+		sumOfColors += getLight(uLightCol[2], uLightPos[2]);
+		sumOfColors += getLight(uLightCol[3], uLightPos[3]);
+
 	vec4 objectColor = texture(uImage0, coord.xy);
 
-	vec4 sumOfColors = vec4(0, 0, 0, 0);
-
-	
-	/*
-    // Since non constant indexis aren't allowed for array access in GLSL this breaks everything
-    for(int lightNum = 0; lightNum < uLightCt; lightNum++)
-		getLight(uLightCol[lightNum], uLightPos[lightNum], objectColor);   */
-
-	if(uLightCt > 0){
-		sumOfColors += getLight(uLightCol[0], uLightPos[0], objectColor);
-	}
-	if(uLightCt > 1){
-		sumOfColors += getLight(uLightCol[1], uLightPos[1], objectColor);
-	}	
-
-	if(uLightCt > 2){
-		sumOfColors += getLight(uLightCol[2], uLightPos[2], objectColor);
-	}	
-
-	if(uLightCt > 3){
-		sumOfColors += getLight(uLightCol[3], uLightPos[3], objectColor);
-	}	
-
-	rtFragColor = sumOfColors;
+	rtFragColor = objectColor * sumOfColors;
+	//rtFragColor =  vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = getLight(uLightCol[0], uLightPos[0]);
 
 }
 
