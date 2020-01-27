@@ -31,65 +31,60 @@
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
-uniform vec4 uLightPos[];
-uniform vec4 uLightCol[];
+uniform vec4 uLightPos [4];
+uniform vec4 uLightCol [4];
 
 uniform int uLightCt;
-uniform vec4 uColor;
 
-
-out vec4 rtFragColor;
-
-in vec4 coord;
-in vec4 csPos;
-in vec4 viewPos;
+in vec4 texCoord;
+in vec4 surfaceCoord;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
-vec4 getPointLight(vec4 lightPos, vec4 iNormal, vec4 pos)
+out vec4 rtFragColor;
+
+vec4 n_lightRay;
+
+vec4 getLight(vec4 lightCol, vec4 lightPos)
 {
-vec4 normal;
+	vec4 lightRay = lightPos - surfaceCoord;
 
-vec4 dir = normalize(lightPos - pos);
+	n_lightRay = normalize(lightRay);
+
+	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
+
+	vec4 result = diff_coef * lightCol;
 	
-vec4 diff = max(dot(iNormal, dir), 0.0) * uColor;
-
-vec4 reflectDir = reflect(-dir, iNormal);
-
-float spec = pow(max(dot(csPos, reflectDir), 0), 0.5);
-
-normal += .5 + diff + spec;
-
-return normal;
+	return result;
 }
 
+float getSpecular(vec4 lightPos, float exponenet)
+{
+
+//TODO:: change uLightPos[] to the camera position!!!
+vec4 viewerDir = uLightPos[0] - surfaceCoord;
+vec4 viewerDir_normalized = normalize(viewerDir);
+
+vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
+
+float specularCoeff = pow(dot(viewerDir_normalized, reflectDir), exponenet);
+
+return specularCoeff;
+}
 
 void main()
 {
 	
-//	vec4 lNorm = getPointLight();
-//
-//	float iDiff = dot(normalize(transformedNormal), lNorm);
-//
-//	vec4 vNorm = normalize(viewPos - coord);
-//
-//	vec4 rNorm = reflect(-lNorm, transformedNormal);
-//	
-//	float iSpec = pow(max(dot(vNorm, rNorm), 0), 32);
-vec4 iPhong;
+	vec4 sumOfColors;	
 
-//for (int i = 0; i < uLightCt; i++)
-//{
-//	iPhong += getPointLight(uLightPos[i], transformedNormal, coord);
-//}
+	for(int i = 0; i < uLightCt; i++)
+	{
+		sumOfColors += getLight(uLightCol[i], uLightPos[i]) + getSpecular(uLightPos[i], 2) + .0001;
+	}
 
-//iPhong += getPointLight(uLightPos[0], transformedNormal, coord);
-//iPhong += getPointLight(uLightPos[1], transformedNormal, coord);	
-//iPhong += getPointLight(uLightPos[2], transformedNormal, coord);
-//iPhong += getPointLight(uLightPos[3], transformedNormal, coord);
+	vec4 objectColor = texture(uImage0, texCoord.xy);
 
-	rtFragColor = iPhong;
-	//rtFragColor = (iPhong) * texture(uImage0, coord.xy); 
+	rtFragColor = objectColor * sumOfColors;
+
 }
-

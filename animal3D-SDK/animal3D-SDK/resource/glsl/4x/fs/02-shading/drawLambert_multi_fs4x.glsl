@@ -36,8 +36,8 @@ uniform vec4 uLightCol [4];
 
 uniform int uLightCt;
 
-in vec4 coord;
-in vec4 viewPos;
+in vec4 texCoord;
+in vec4 surfaceCoord;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
@@ -46,7 +46,7 @@ out vec4 rtFragColor;
 
 vec4 getLight(vec4 lightCol, vec4 lightPos)
 {
-	vec4 lightRay = lightPos - viewPos;
+	vec4 lightRay = lightPos - surfaceCoord;
 
 	vec4 n_lightRay = normalize(lightRay);
 
@@ -68,7 +68,7 @@ void main()
 		sumOfColors += getLight(uLightCol[i], uLightPos[i]);
 	}
 
-	vec4 objectColor = texture(uImage0, coord.xy);
+	vec4 objectColor = texture(uImage0, texCoord.xy);
 
 	rtFragColor = objectColor * sumOfColors;
 

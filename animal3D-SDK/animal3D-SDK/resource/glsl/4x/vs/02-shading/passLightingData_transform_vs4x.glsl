@@ -48,15 +48,15 @@ uniform mat4 uMV_nrm;
 uniform mat4 uAtlas; 
 
 
-out vec4 coord;
-out vec4 viewPos;
+out vec4 texCoord;
+out vec4 surfaceCoord;
 out vec4 transformedNormal;
 
 void main()
 {
-	viewPos = uMV * aPosition;
+	surfaceCoord = uMV * aPosition;
 	transformedNormal = uMV_nrm * aNormal;
-	coord = uAtlas *  aTexCoord;
+	texCoord = uAtlas *  aTexCoord;
 
-	gl_Position = uP* viewPos;
+	gl_Position = uP* surfaceCoord;
 }
