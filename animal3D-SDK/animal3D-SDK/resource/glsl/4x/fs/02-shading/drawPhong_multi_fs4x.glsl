@@ -52,6 +52,8 @@ vec4 n_lightRay;
 float ambent = .1;
 float specularStrength = .4;
 
+float attenConst = .001;
+
 //Get defuse light for the given object
 vec4 getLight(vec4 lightCol, vec4 lightPos, float lightSize)
 {
@@ -60,10 +62,15 @@ vec4 getLight(vec4 lightCol, vec4 lightPos, float lightSize)
 
 	n_lightRay = normalize(lightRay);
 
+	//Implementing Attenuaton
+	float dist = length(lightRay);
+
+	float atten = max((1 / (1 + attenConst*pow(dist, 2))), .4);
+
 	float diff_coef = max(dot(normalize(transformedNormal), n_lightRay), 0.0);
 
 	//Light size seems to be in the range of 0 to 100, but it is more useful as a number between 0 and 1
-	vec4 result = diff_coef * lightCol * (lightSize/100);
+	vec4 result = diff_coef * lightCol * (lightSize/100) * atten;
 	
 	return result;
 }
@@ -79,7 +86,14 @@ float getSpecular(vec4 lightPos, float exponenet)
 
 	vec4 reflectDir = reflect(-n_lightRay, normalize(transformedNormal));
 
-	return pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
+	//Implementing Attenuaton
+	vec4 lightRay = lightPos - viewPos;
+	float dist = length(lightRay);
+
+	float atten = max((1 / (1 + attenConst*pow(dist, 2))), .4);
+
+
+	return pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet) * atten;
 }
 
 void main()

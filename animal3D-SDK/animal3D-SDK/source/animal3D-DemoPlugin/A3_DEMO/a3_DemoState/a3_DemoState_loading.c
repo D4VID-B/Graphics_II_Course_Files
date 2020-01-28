@@ -35,7 +35,7 @@
 
 // **WARNING: FOR TESTING/COMPARISON ONLY, DO NOT USE IN DELIVERABLE BUILDS**
 // uncomment this to allow shader decoding (if available)
-#define A3_USER_ENABLE_SHADER_DECODING
+// #define A3_USER_ENABLE_SHADER_DECODING
 
 
 //-----------------------------------------------------------------------------
