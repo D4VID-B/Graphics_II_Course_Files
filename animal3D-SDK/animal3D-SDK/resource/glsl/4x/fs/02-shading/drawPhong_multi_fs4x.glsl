@@ -68,7 +68,7 @@ vec4 viewerDir_normalized = normalize(viewerDir);
 
 vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
 
-float specularCoeff = pow(dot(viewerDir_normalized, reflectDir), exponenet);
+float specularCoeff = pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
 
 return specularCoeff;
 }
@@ -76,17 +76,18 @@ return specularCoeff;
 void main()
 {
 	
-	vec4 sumOfColors;	
+	vec4 allDefuse;	
+	vec4 allSpecular;	
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-		sumOfColors += getLight(uLightCol[i], uLightPos[i]) + getSpecular(uLightPos[i], 1);
+		allDefuse += getLight(uLightCol[i], uLightPos[i]);
+		allSpecular += getSpecular(uLightPos[i], 10);
 	}
 
-	sumOfColors += .5;
 
 	vec4 objectColor = texture(uImage0, texCoord.xy);
 
-	rtFragColor = objectColor * sumOfColors;
+	rtFragColor = (objectColor * allDefuse) + allSpecular + .01;
 
 }
