@@ -33,26 +33,37 @@
 
 uniform vec4 uLightPos [4];
 uniform vec4 uLightCol [4];
+uniform float uLightSz [4];
+uniform float uLightSzInvSq [4];
 
 uniform int uLightCt;
 
 in vec4 texCoord;
-in vec4 surfaceCoord;
+in vec4 viewPos;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
 out vec4 rtFragColor;
 
-vec4 getLight(vec4 lightCol, vec4 lightPos)
+vec4 n_lightRay;
+
+
+float ambent = .1;
+float specularStrength = .4;
+
+//Get defuse light for the given object
+vec4 getLight(vec4 lightCol, vec4 lightPos, float lightSize)
 {
-	vec4 lightRay = lightPos - surfaceCoord;
+	//This only works when you use the viewPos as the position. I have no idea why
+	vec4 lightRay = lightPos - viewPos;
 
-	vec4 n_lightRay = normalize(lightRay);
+	n_lightRay = normalize(lightRay);
 
-	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
+	float diff_coef = max(dot(normalize(transformedNormal), n_lightRay), 0.0);
 
-	vec4 result = diff_coef * lightCol;
+	//Light size seems to be in the range of 0 to 100, but it is more useful as a number between 0 and 1
+	vec4 result = diff_coef * lightCol * (lightSize/100);
 	
 	return result;
 }
@@ -65,7 +76,7 @@ void main()
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-		sumOfColors += getLight(uLightCol[i], uLightPos[i]);
+		sumOfColors += getLight(uLightCol[i], uLightPos[i], uLightSz[i]);
 	}
 
 	vec4 objectColor = texture(uImage0, texCoord.xy);

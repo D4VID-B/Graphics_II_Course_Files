@@ -41,6 +41,7 @@ uniform mat4 uMVP;
 uniform mat4 uAtlas; 
 
 out vec4 coord;
+out vec4 fragPos;
 
 void main()
 {

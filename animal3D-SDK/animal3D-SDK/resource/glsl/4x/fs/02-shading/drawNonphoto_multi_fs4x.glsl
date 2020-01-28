@@ -31,10 +31,46 @@
 //	4) implement nonphotorealistic shading model
 //	Note: test all data and inbound values before using them!
 
+uniform vec4 uLightPos [4];
+uniform vec4 uLightCol [4];
+
+uniform int uLightCt;
+
+in vec4 texCoord;
+in vec4 surfaceCoord;
+in vec4 transformedNormal;
+
+uniform sampler2D uImage0;
+
 out vec4 rtFragColor;
+
+vec4 getLight(vec4 lightCol, vec4 lightPos)
+{
+	vec4 lightRay = lightPos - surfaceCoord;
+
+	vec4 n_lightRay = normalize(lightRay);
+
+	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
+
+	vec4 result = diff_coef * lightCol;
+	
+	return result;
+}
+
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE BLUE
-	rtFragColor = vec4(0.0, 0.0, 1.0, 1.0);
+	
+	vec4 sumOfColors;	
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		sumOfColors += getLight(uLightCol[i], uLightPos[i]);
+	}
+
+	vec4 objectColor = texture(uImage0, texCoord.xy);
+
+	rtFragColor = objectColor * sumOfColors;
+
 }
+

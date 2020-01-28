@@ -33,11 +33,13 @@
 
 uniform vec4 uLightPos [4];
 uniform vec4 uLightCol [4];
+uniform float uLightSz [4];
+uniform float uLightSzInvSq [4];
 
 uniform int uLightCt;
 
 in vec4 texCoord;
-in vec4 surfaceCoord;
+in vec4 viewPos;
 in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
@@ -47,16 +49,21 @@ out vec4 rtFragColor;
 vec4 n_lightRay;
 
 
+float ambent = .1;
+float specularStrength = .4;
+
 //Get defuse light for the given object
-vec4 getLight(vec4 lightCol, vec4 lightPos)
+vec4 getLight(vec4 lightCol, vec4 lightPos, float lightSize)
 {
-	vec4 lightRay = lightPos - surfaceCoord;
+	//This only works when you use the viewPos as the position. I have no idea why
+	vec4 lightRay = lightPos - viewPos;
 
 	n_lightRay = normalize(lightRay);
 
-	float diff_coef = dot(normalize(transformedNormal), n_lightRay);
+	float diff_coef = max(dot(normalize(transformedNormal), n_lightRay), 0.0);
 
-	vec4 result = diff_coef * lightCol;
+	//Light size seems to be in the range of 0 to 100, but it is more useful as a number between 0 and 1
+	vec4 result = diff_coef * lightCol * (lightSize/100);
 	
 	return result;
 }
@@ -65,14 +72,14 @@ vec4 getLight(vec4 lightCol, vec4 lightPos)
 float getSpecular(vec4 lightPos, float exponenet)
 {
 
-	vec4 viewerDir = uLightPos[0] - surfaceCoord; //Uses position of first light as viewer since we could not find view position
-	vec4 viewerDir_normalized = normalize(viewerDir);
+	vec4 viewerDir_normalized = normalize(viewPos);
 
-	vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
+	//Leaving this here to show how the math works
+	//vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
 
-	float specularCoeff = pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
+	vec4 reflectDir = reflect(-n_lightRay, normalize(transformedNormal));
 
-	return specularCoeff;
+	return pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
 }
 
 void main()
@@ -81,17 +88,21 @@ void main()
 	vec4 allDefuse;	
 	vec4 allSpecular;	
 
+	
 	//Get the sum of defuse and specular for all lights
 	for(int i = 0; i < uLightCt; i++)
 	{
-		allDefuse += getLight(uLightCol[i], uLightPos[i]);
-		allSpecular += getSpecular(uLightPos[i], 10);
+		allDefuse += getLight(uLightCol[i], uLightPos[i], uLightSz[i]);
+		allSpecular += getSpecular(uLightPos[i], uLightSz[i]);
 	}
+
+
 
 	//Get object texture color
 	vec4 objectColor = texture(uImage0, texCoord.xy);
 
-	//This is the version of phong that produced the best results
-	rtFragColor = (objectColor * allDefuse) + allSpecular + .01;
+	
+	//Add together all types of light for phong 
+	rtFragColor = (ambent + allDefuse + specularStrength * allSpecular) * objectColor;
 
 }
