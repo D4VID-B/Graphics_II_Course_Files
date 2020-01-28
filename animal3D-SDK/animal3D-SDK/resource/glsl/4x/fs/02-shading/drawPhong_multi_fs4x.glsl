@@ -46,6 +46,8 @@ out vec4 rtFragColor;
 
 vec4 n_lightRay;
 
+
+//Get defuse light for the given object
 vec4 getLight(vec4 lightCol, vec4 lightPos)
 {
 	vec4 lightRay = lightPos - surfaceCoord;
@@ -59,18 +61,18 @@ vec4 getLight(vec4 lightCol, vec4 lightPos)
 	return result;
 }
 
+//Get the specular coeffent
 float getSpecular(vec4 lightPos, float exponenet)
 {
 
-//TODO:: change uLightPos[] to the camera position!!!
-vec4 viewerDir = uLightPos[0] - surfaceCoord;
-vec4 viewerDir_normalized = normalize(viewerDir);
+	vec4 viewerDir = uLightPos[0] - surfaceCoord; //Uses position of first light as viewer since we could not find view position
+	vec4 viewerDir_normalized = normalize(viewerDir);
 
-vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
+	vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
 
-float specularCoeff = pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
+	float specularCoeff = pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet);
 
-return specularCoeff;
+	return specularCoeff;
 }
 
 void main()
@@ -79,15 +81,17 @@ void main()
 	vec4 allDefuse;	
 	vec4 allSpecular;	
 
+	//Get the sum of defuse and specular for all lights
 	for(int i = 0; i < uLightCt; i++)
 	{
 		allDefuse += getLight(uLightCol[i], uLightPos[i]);
 		allSpecular += getSpecular(uLightPos[i], 10);
 	}
 
-
+	//Get object texture color
 	vec4 objectColor = texture(uImage0, texCoord.xy);
 
+	//This is the version of phong that produced the best results
 	rtFragColor = (objectColor * allDefuse) + allSpecular + .01;
 
 }
