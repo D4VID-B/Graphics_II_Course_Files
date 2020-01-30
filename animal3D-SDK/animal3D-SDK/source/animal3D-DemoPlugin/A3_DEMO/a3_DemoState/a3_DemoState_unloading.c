@@ -85,13 +85,13 @@ void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 {
 	// ****TO-DO: 
 	//	-> 2.1e: framebuffer unloading
-	/*
+	
 	a3_Framebuffer* currentFBO = demoState->framebuffer,
 		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	while (currentFBO < endFBO)
 		a3framebufferRelease(currentFBO++);
-	*/
+	
 }
 
 
