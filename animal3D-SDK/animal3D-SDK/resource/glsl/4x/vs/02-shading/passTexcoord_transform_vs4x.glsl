@@ -40,7 +40,7 @@ uniform mat4 uMVP;
 
 uniform mat4 uAtlas; 
 
-uniform double uTime;
+
 
 out vec4 coord;
 out vec4 fragPos;
