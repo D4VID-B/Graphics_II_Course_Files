@@ -31,18 +31,22 @@
 //	4) sample texture using modified texture coordinate
 //	5) assign sample to output color
 
-uniform sampler2D uImage0;
+uniform sampler2D screenTexture;
 
-in vec4 texCoord;
+in vec4 coord;
+
+uniform double uTime;
 
 out vec4 rtFragColor;
 
 void main()
 {
-	vec4 manipulation =  texture(uImage0, texCoord.xy);
+	vec4 manipulation =  coord;
 
-	manipulation *= sin(42);
-	//rtFragColor = texture(uImage0, manipulation.xy);
-	rtFragColor.xyz = manipulation.xyz;
-	//rtFragColor = vec4(0, 0, 0, 1);
-}
+	manipulation.x += sin(float(uTime));
+	//manipulation.y = sin(float(uTime));
+	//manipulation.z = sin(float(uTime));
+
+	//rtFragColor = texture(screenTexture, coord.xy);
+	rtFragColor = texture(screenTexture, manipulation.xy);
+	}
