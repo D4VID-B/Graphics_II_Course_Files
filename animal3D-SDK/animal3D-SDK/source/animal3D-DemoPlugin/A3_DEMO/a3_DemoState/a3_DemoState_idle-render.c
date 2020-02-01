@@ -175,6 +175,7 @@ void a3demo_render_main_controls(const a3_DemoState *demoState,
 		"Texture",
 		"Color manipulation",
 		"Texcoord manipulation",
+		"Color + coord manipulation"
 	};
 
 	// text color
@@ -411,6 +412,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			demoState->prog_drawTexture,
 			demoState->prog_drawTexture_colorManip,
 			demoState->prog_drawTexture_coordManip,
+			demoState->prog_drawTexture_coordColorManip,
 		},
 	};
 
