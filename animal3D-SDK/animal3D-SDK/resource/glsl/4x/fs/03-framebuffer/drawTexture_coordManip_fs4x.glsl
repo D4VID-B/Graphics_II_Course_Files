@@ -43,12 +43,7 @@ void main()
 {
 	vec4 manipulation =  coord;
 
-	float temp = manipulation.x;
-	float temp_2 = manipulation.y;
+	vec2 tempUV = vec2(coord.x, coord.y+sin(coord.x*20.0) * -.05);
 
-	manipulation.x = manipulation.y;
-	manipulation.y = temp;
-
-	//rtFragColor = texture(screenTexture, coord.xy);
-	rtFragColor = texture2D(screenTexture, manipulation.xy) * clamp(sin(float(uTime)), .1f, 1);
+	rtFragColor = texture(screenTexture, tempUV);
 	}
