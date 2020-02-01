@@ -46,10 +46,21 @@ in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
 
-out vec4 rtFragColor;
+layout (location = 0) out vec4 rtFragColor;
 
 vec4 n_lightRay;
 
+
+layout (location = 1) out vec4 outPosition;
+layout (location = 2) out vec4 outNormal;
+layout (location = 3) out vec4 outTextureCoord;
+layout (location = 4) out vec4 outDiffTexture;
+layout (location = 5) out vec4 outSpecularMap;
+layout (location = 6) out vec4 outDiffLighting;
+layout (location = 7) out vec4 outSpecularLighting;
+
+uniform sampler2D uTex_sm;
+uniform sampler2D uTex_dm;
 
 float ambent = .1;
 float specularStrength = .4;
@@ -109,7 +120,7 @@ void main()
 	for(int i = 0; i < uLightCt; i++)
 	{
 		allDefuse += getLight(uLightCol[i], uLightPos[i], uLightSz[i]);
-		allSpecular += getSpecular(uLightPos[i], uLightSz[i]);
+		allSpecular += getSpecular(uLightPos[i], uLightSz[i]) * uLightCol[i];
 	}
 
 
@@ -121,4 +132,12 @@ void main()
 	//Add together all types of light for phong 
 	rtFragColor = (ambent + allDefuse + specularStrength * allSpecular) * objectColor;
 
+	rtFragColor = vec4(rtFragColor.xyz, 1);
+	outPosition = viewPos;
+	outNormal = vec4(normalize(transformedNormal.xyz), 1);
+	outTextureCoord = texCoord;
+	outDiffTexture = texture(uTex_dm, texCoord.xy);
+	outSpecularMap = texture(uTex_sm, texCoord.xy);
+	outDiffLighting = vec4(allDefuse.xyz, 1);
+	outSpecularLighting = vec4(allSpecular.xyz, 1);
 }

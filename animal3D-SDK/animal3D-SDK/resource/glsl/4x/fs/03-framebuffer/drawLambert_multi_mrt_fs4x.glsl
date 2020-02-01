@@ -40,13 +40,21 @@ uniform float uLightSzInvSq [4];
 
 uniform int uLightCt;
 
-in vec4 texCoord;
-in vec4 viewPos;
-in vec4 transformedNormal;
+ in vec4 texCoord;
+ in vec4 viewPos;
+ in vec4 transformedNormal;
 
 uniform sampler2D uImage0;
+uniform sampler2D uTex_dm;
 
 out vec4 rtFragColor;
+
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 outPosition;
+layout (location = 2) out vec4 outNormal;
+layout (location = 3) out vec4 outTextureCoord;
+layout (location = 4) out vec4 outDiffTexture;
+layout (location = 6) out vec4 outDiffLighting;
 
 vec4 n_lightRay;
 
@@ -91,6 +99,11 @@ void main()
 
 	rtFragColor = objectColor * sumOfColors;
 
-
+	outColor = vec4(rtFragColor.xyz, 1);
+	outPosition = viewPos;
+	outNormal = vec4(normalize(transformedNormal.xyz), 1);
+	outTextureCoord = texCoord;
+	outDiffTexture = texture(uTex_dm, texCoord.xy);
+	outDiffLighting = vec4(sumOfColors.xyz, 1);
 }
 
