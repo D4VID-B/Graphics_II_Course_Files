@@ -31,10 +31,21 @@
 //	4) modify sample in some creative way
 //	5) assign modified sample to output color
 
+uniform sampler2D screenTexture;
+
+in vec4 coord;
+
+uniform double uTime;
+
 out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE LIGHT GREY
-	rtFragColor = vec4(0.5, 0.5, 0.5, 1.0);
+	//The numbers used are all totally arbratary and used to make it look cool
+	float colorR = min(sin(float(uTime * 3)), .1); 
+	float colorB = min(sin(float(uTime * 1)), .5);
+	float colorG = min(sin(float(uTime * 2)), .6);
+	vec4 pixelColor = texture2D(screenTexture, coord.xy) + vec4(colorR, colorB,colorG , 0);
+	rtFragColor = pixelColor;
+
 }
