@@ -47,20 +47,15 @@ out vec4 rtFragColor;
 void main()
 {
 
-	float tester = step(length(coord), ballRadius);
-
 	//The numbers used are all totally arbratary and used to make it look cool
 	float colorR = min(sin(float(uTime * 3)), .1); 
 	float colorB = min(sin(float(uTime * 1)), .5);
 	float colorG = min(sin(float(uTime * 2)), .6);
 	vec4 pixelColor = texture2D(screenTexture, coord.xy) + vec4(colorR, colorB,colorG , 0);
 
-	if(length(coord.xy) < ballRadius){
-		rtFragColor = pixelColor;
-	}
-	else{
-		rtFragColor = vec4(0, 0, 0, 1);
-	}
+	
+	rtFragColor = pixelColor;
+	
 	
 
 }
