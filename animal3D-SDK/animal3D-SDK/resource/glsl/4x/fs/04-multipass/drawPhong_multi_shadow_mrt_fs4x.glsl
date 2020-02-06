@@ -33,6 +33,8 @@
 //	4) perform shadow test
 
 uniform vec4 shadowCoord;
+uniform sampler2D uTex_shadow;
+uniform sampler2D uTex_dm;
 
 uniform vec4 uLightPos [4];
 uniform vec4 uLightCol [4];
@@ -114,12 +116,18 @@ void main()
 	}
 
 	//Performing perspective divide
-	//shadowCoord
+	shadowCoord / shadowCoord.w;
+	float shadowOut = texture2D(uTex_shadow, shadowCoord.xy).r;
+	bool isShadow = ( shadowCoord.z > shadowOut);
 
 	//Get object texture color
 	vec4 objectColor = texture(uImage0, texCoord.xy);
 
-	
+	if(isShadow)
+	{
+		objectColor *= .2;
+	}
+
 	//Add together all types of light for phong 
 	rtFragColor = (ambent + allDefuse + specularStrength * allSpecular) * objectColor;
 
