@@ -32,9 +32,10 @@
 //	3) declare shadow map texture
 //	4) perform shadow test
 
-uniform vec4 shadowCoord;
+in vec4 shadowCoord;
 uniform sampler2D uTex_shadow;
 uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
 
 uniform vec4 uLightPos [4];
 uniform vec4 uLightCol [4];
@@ -116,16 +117,16 @@ void main()
 	}
 
 	//Performing perspective divide
-	shadowCoord / shadowCoord.w;
-	float shadowOut = texture2D(uTex_shadow, shadowCoord.xy).r;
-	bool isShadow = ( shadowCoord.z > shadowOut);
+	vec4 temp = shadowCoord / shadowCoord.w;
+	float shadowOut = texture2D(uTex_shadow, temp.xy).r;
+	bool isShadow = ( temp.z > shadowOut);
 
 	//Get object texture color
-	vec4 objectColor = texture(uImage0, texCoord.xy);
+	vec4 objectColor = texture(uTex_dm, texCoord.xy);
 
 	if(isShadow)
 	{
-		objectColor *= .2;
+		objectColor.rgb *= .2;
 	}
 
 	//Add together all types of light for phong 

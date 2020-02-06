@@ -56,6 +56,6 @@ void main()
 	texCoord = uAtlas *  aTexCoord;
 
 	surfacePos = uP* viewPos;
-	shadowCoord = uMVPB * shadowCoord;
+	shadowCoord = uMVPB * aPosition;
 	gl_Position = surfacePos;
 }
