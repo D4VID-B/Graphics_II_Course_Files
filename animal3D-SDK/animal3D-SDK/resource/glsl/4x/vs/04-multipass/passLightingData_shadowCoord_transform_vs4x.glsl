@@ -40,7 +40,7 @@ uniform mat4 uMV;
 uniform mat4 uP;
 uniform mat4 uMV_nrm;
 uniform mat4 uAtlas; 
-uniform mat4 uMVPB;
+uniform mat4 uMVPB_other;
 
 
 out vec4 texCoord;
@@ -56,6 +56,6 @@ void main()
 	texCoord = uAtlas *  aTexCoord;
 
 	surfacePos = uP* viewPos;
-	shadowCoord = uMVPB * aPosition;
+	shadowCoord = uMVPB_other * aPosition;
 	gl_Position = surfacePos;
 }
