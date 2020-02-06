@@ -124,13 +124,9 @@ void main()
 	//Get object texture color
 	vec4 objectColor = texture(uTex_dm, texCoord.xy);
 
-	vec3 outputColor = ((ambent + allDefuse + specularStrength * allSpecular) * objectColor).xyz;
-
-	vec3 color = vec3(1.0, 0, 0);
-	if( temp.z > shadowOut)
+	if( isShadow)
 	{
-		color = vec3(0, 1.0, 0);
-		objectColor.rgb = vec3(1.0, 0, 0);
+		objectColor.rgb *= .2;
 		
 	}
 
