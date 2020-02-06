@@ -124,12 +124,18 @@ void main()
 	//Get object texture color
 	vec4 objectColor = texture(uTex_dm, texCoord.xy);
 
-	if(isShadow)
+	vec3 outputColor = ((ambent + allDefuse + specularStrength * allSpecular) * objectColor).xyz;
+
+	vec3 color = vec3(1.0, 0, 0);
+	if( temp.z > shadowOut)
 	{
-		objectColor.rgb *= .2;
+		color = vec3(0, 1.0, 0);
+		objectColor.rgb = vec3(1.0, 0, 0);
+		
 	}
 
 	//Add together all types of light for phong 
 	rtFragColor = vec4(((ambent + allDefuse + specularStrength * allSpecular) * objectColor).xyz, 1.0);
+
 
 }
