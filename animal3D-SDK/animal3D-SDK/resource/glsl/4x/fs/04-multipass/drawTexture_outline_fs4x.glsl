@@ -28,14 +28,16 @@
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
 
-//out vec4 rtFragColor;
-//
-//void main()
-//{
-//	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-//	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
-//}
+//https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
+
 uniform sampler2D uImage0;
+uniform sampler2D uImage1;
+uniform sampler2D uImage2;
+uniform sampler2D uImage3;
+uniform sampler2D uImage4;
+uniform sampler2D uImage5;
+uniform sampler2D uImage6;
+uniform sampler2D uImage7;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 3) out vec4 texCoord;
@@ -43,6 +45,6 @@ in vec4 coord;
 
 void main()
 {
-	rtFragColor = texture(uImage0, coord.xy);
+	rtFragColor = texture(uImage1, coord.xy);
 	texCoord = coord;
 }
