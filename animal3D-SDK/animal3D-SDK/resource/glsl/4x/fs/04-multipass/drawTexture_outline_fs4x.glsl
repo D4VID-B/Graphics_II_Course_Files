@@ -35,14 +35,22 @@
 //	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
 //	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
 //}
+uniform sampler2D screenTexture;
 uniform sampler2D uImage0;
+uniform sampler2D uTex_dm;
 
-layout (location = 0) out vec4 rtFragColor;
-layout (location = 3) out vec4 texCoord;
 in vec4 coord;
+
+out vec4 rtFragColor;
+
 
 void main()
 {
-	rtFragColor = texture(uImage0, coord.xy);
-	texCoord = coord;
+
+	vec4 pixelColor = texture2D(screenTexture, coord.xy);
+
+	rtFragColor = vec4(pixelColor.xyz, 1.0);
+	
+	
+
 }

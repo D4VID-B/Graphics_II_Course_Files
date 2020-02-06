@@ -35,10 +35,11 @@ uniform sampler2D uImage0;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 3) out vec4 texCoord;
+layout (location = 0) in vec4 aPosition;
 in vec4 coord;
 
 void main()
 {
-	rtFragColor = texture(uImage0, coord.xy);
+	rtFragColor = texture(uImage0, aPosition.xy);
 	texCoord = coord;
 }

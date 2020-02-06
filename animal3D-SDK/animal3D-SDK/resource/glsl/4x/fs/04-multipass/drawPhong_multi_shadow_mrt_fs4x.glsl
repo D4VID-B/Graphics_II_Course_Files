@@ -129,8 +129,7 @@ void main()
 	vec3 color = vec3(1.0, 0, 0);
 	if( temp.z > shadowOut)
 	{
-		color = vec3(0, 1.0, 0);
-		objectColor.rgb = vec3(1.0, 0, 0);
+		objectColor.rgb *= .2;
 		
 	}
 

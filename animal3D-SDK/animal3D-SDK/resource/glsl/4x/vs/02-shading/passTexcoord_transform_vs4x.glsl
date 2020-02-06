@@ -50,5 +50,7 @@ out vec4 fragPos;
 void main()
 {
 	coord = uAtlas *  aTexCoord;
+	fragPos = gl_Position;
 	gl_Position = uMVP * aPosition;
+	
 }
