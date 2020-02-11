@@ -28,7 +28,7 @@
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
 
-//https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
+// outlining article with some alternate ways (to used): https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
 
 																								//original code taken from: https://gist.github.com/Hebali/6ebfc66106459aacee6a9fac029d0115
 
