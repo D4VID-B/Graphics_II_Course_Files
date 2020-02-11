@@ -130,7 +130,7 @@ void main()
 
 	
 	//Add together all types of light for phong 
-	rtFragColor = (ambent + allDefuse + specularStrength * allSpecular) * objectColor;
+	rtFragColor = vec4(((ambent + allDefuse + specularStrength * allSpecular) * objectColor).xyz, 1.0);
 
 	rtFragColor = vec4(rtFragColor.xyz, 1);
 	outPosition = viewPos;
