@@ -28,74 +28,70 @@
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
 
-//https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
+// outlining article with some alternate ways (to used): https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
 
-uniform sampler2D uImage0;
-uniform sampler2D uImage1;
-uniform sampler2D uImage2;
-uniform sampler2D uImage3;
-uniform sampler2D uImage4;
-uniform sampler2D uImage5;
-uniform sampler2D uImage6;
-uniform sampler2D uImage7;
+																								//original code taken from: https://gist.github.com/Hebali/6ebfc66106459aacee6a9fac029d0115
 
-uniform sampler2D uTex_shadow;
-uniform sampler2D uTex_dm;
+uniform sampler2D uImage0; //Base/composite texture
+uniform sampler2D uImage1; //Base object shapes (?)
+uniform sampler2D uImage2; 
+uniform sampler2D uImage3; 
+uniform sampler2D uImage4; 
+uniform sampler2D uImage5; 
+uniform sampler2D uImage6;  
+uniform sampler2D uImage7; //Earth map texture
 
+//Output of the previous shader
 uniform sampler2D screenTexture;
 
+//Stuff we already have
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 3) out vec4 texCoord;
 in vec4 coord;
 
-out vec4 rtFragColor;
+																								// Sobel Edge Detection Filter
+																								// GLSL Fragment Shader
+																								// Original Implementation by Patrick Hebron
+																								// Modified by David Bakaleinik
 
-
-mat3 xKernal = mat3( 
-    1.0, 2.0, 1.0, 
-    0.0, 0.0, 0.0, 
-   -1.0, -2.0, -1.0 
-);
-mat3 yKernal = mat3( 
-    1.0, 0.0, -1.0, 
-    2.0, 0.0, -2.0, 
-    1.0, 0.0, -1.0 
-);
-
-float getGrayscale(vec4 color){
-	return length(color) /4;
-}
-
-float getSobelValue(sampler2D theTexture, mat3 kernal, int x, int y){
-
-	vec3 screenTexture = texture(screenTexture, coord.xy).rgb;
-
-	
-	float magX =0;
-	for(int i = 0; i < 3; i++){
-		for(int j = 0; j < 3; j++){
-
-			//Which surrounding pixel to grab the color of
-			int xn = x + i - 1;
-			int yn = y + j - 1;
-
-			magX += xKernal[i][j] * getGrayscale(texelFetch(theTexture, ivec2(xn, yn), 1));
-		}
-	}
-	return magX;
-}
-
-void main()
+//Function that creates a 3x3 kernel (stored in an array), through sampling of 9 screen regions
+void make_kernel(inout vec4 kernel_array[9], sampler2D image, vec2 coordinate)
 {
-	float width = textureSize(screenTexture, 0).x;
-	float height = textureSize(screenTexture, 0).y;
+//Calculating the dimantions of the onput texture
+	float width = 1.0 / textureSize(image, 0).x;
+	float height = 1.0 / textureSize(image, 0).y;
 
-	
+	//populating the array through repeated sampling of the given sampler2D texture, offset by the dimentions of the texture
+	kernel_array[0] = texture2D(image, coordinate + vec2( -width, -height));
+	kernel_array[1] = texture2D(image, coordinate + vec2(0.0, -height));
+	kernel_array[2] = texture2D(image, coordinate + vec2(  width, -height));
+	kernel_array[3] = texture2D(image, coordinate + vec2( -width, 0.0));
+	kernel_array[4] = texture2D(image, coordinate);
+	kernel_array[5] = texture2D(image, coordinate + vec2(  width, 0.0));
+	kernel_array[6] = texture2D(image, coordinate + vec2( -width, height));
+	kernel_array[7] = texture2D(image, coordinate + vec2(0.0, height));
+	kernel_array[8] = texture2D(image, coordinate + vec2(  width, height));
+}
 
-	int x = int(coord.x * width);
-	int y = int(coord.y * height);
+void main(void) 
+{
+	vec4 kernel_array[9]; //Array of 9 vec4 - potentially represents a kernel
+	make_kernel( kernel_array, uImage1, coord.xy );
 
-	float xConvolution = getSobelValue(screenTexture, xKernal, x, y);
-	float yConvolution = getSobelValue(screenTexture, yKernal, x, y);
+	//creating the horizontal and vertical gradient maps
+	vec4 sobel_edge_h = kernel_array[2] + (2.0*kernel_array[5]) + kernel_array[8] - (kernel_array[0] + (2.0*kernel_array[3]) + kernel_array[6]);
+  	vec4 sobel_edge_v = kernel_array[0] + (2.0*kernel_array[1]) + kernel_array[2] - (kernel_array[6] + (2.0*kernel_array[7]) + kernel_array[8]);
 
-	rtFragColor = vec4(xConvolution, 0.0, 0.0, 1.0);
+	//combination of the horizonal and vertical gradients to produce the final result 
+	vec4 sobel_final = sqrt((sobel_edge_h * sobel_edge_h) + (sobel_edge_v * sobel_edge_v));
 
-} 
+	//getiing the on-screen image
+	vec4 screen_Sample = texture(screenTexture, coord.xy);
+
+	float outlineThickness = 10.0f;
+
+	//final output - sobel produces a black image with edges highlighted in white, so it is reversed by sburtracting sobel.rgb from 1
+	//line thickness can be adjusted using a float
+	//the vec4 is then multiplied by the existing image on the screen to apply the outlines
+	rtFragColor = vec4( 1.0 - sobel_final.rgb * outlineThickness, 1.0 ) * screen_Sample;
+}
