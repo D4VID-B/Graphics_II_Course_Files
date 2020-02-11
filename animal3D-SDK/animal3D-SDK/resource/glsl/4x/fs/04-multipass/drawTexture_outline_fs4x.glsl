@@ -39,13 +39,63 @@ uniform sampler2D uImage5;
 uniform sampler2D uImage6;
 uniform sampler2D uImage7;
 
+uniform sampler2D uTex_shadow;
+uniform sampler2D uTex_dm;
+
+uniform sampler2D screenTexture;
+
 in vec4 coord;
 
 out vec4 rtFragColor;
 
 
+mat3 xKernal = mat3( 
+    1.0, 2.0, 1.0, 
+    0.0, 0.0, 0.0, 
+   -1.0, -2.0, -1.0 
+);
+mat3 yKernal = mat3( 
+    1.0, 0.0, -1.0, 
+    2.0, 0.0, -2.0, 
+    1.0, 0.0, -1.0 
+);
+
+float getGrayscale(vec4 color){
+	return length(color) /4;
+}
+
+float getSobelValue(sampler2D theTexture, mat3 kernal, int x, int y){
+
+	vec3 screenTexture = texture(screenTexture, coord.xy).rgb;
+
+	
+	float magX =0;
+	for(int i = 0; i < 3; i++){
+		for(int j = 0; j < 3; j++){
+
+			//Which surrounding pixel to grab the color of
+			int xn = x + i - 1;
+			int yn = y + j - 1;
+
+			magX += xKernal[i][j] * getGrayscale(texelFetch(theTexture, ivec2(xn, yn), 1));
+		}
+	}
+	return magX;
+}
+
 void main()
 {
-	rtFragColor = texture(uImage1, coord.xy);
-	texCoord = coord;
-}
+	float width = textureSize(screenTexture, 0).x;
+	float height = textureSize(screenTexture, 0).y;
+
+	
+
+	int x = int(coord.x * width);
+	int y = int(coord.y * height);
+
+	float xConvolution = getSobelValue(screenTexture, xKernal, x, y);
+	float yConvolution = getSobelValue(screenTexture, yKernal, x, y);
+
+	rtFragColor = vec4(xConvolution, 0.0, 0.0, 1.0);
+
+} 
