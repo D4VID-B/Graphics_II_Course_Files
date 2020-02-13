@@ -30,10 +30,13 @@
 //	3) sample texture using texture coordinate
 //	4) assign sample to output color
 
+uniform sampler2D uImage0;
+
 out vec4 rtFragColor;
+in vec4 coord;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	
+	rtFragColor = texture(uImage0, coord.xy);
 }

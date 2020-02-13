@@ -33,10 +33,111 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
-out vec4 rtFragColor;
+uniform vec4 uLightPos [4];
+uniform vec4 uLightCol [4];
+uniform float uLightSz [4];
+uniform float uLightSzInvSq [4];
+
+uniform int uLightCt;
+
+in vec4 texCoord;
+in vec4 viewPos;
+in vec4 transformedNormal;
+
+uniform sampler2D uImage0;
+
+layout (location = 0) out vec4 rtFragColor;
+
+vec4 n_lightRay;
+
+
+layout (location = 1) out vec4 outPosition;
+layout (location = 2) out vec4 outNormal;
+layout (location = 3) out vec4 outTextureCoord;
+layout (location = 4) out vec4 outDiffTexture;
+layout (location = 5) out vec4 outSpecularMap;
+layout (location = 6) out vec4 outDiffLighting;
+layout (location = 7) out vec4 outSpecularLighting;
+
+uniform sampler2D uTex_sm;
+uniform sampler2D uTex_dm;
+
+float ambent = .1;
+float specularStrength = .4;
+
+float attenConst = .001;
+
+//Get defuse light for the given object
+vec4 getLight(vec4 lightCol, vec4 lightPos, float lightSize)
+{
+	//This only works when you use the viewPos as the position. I have no idea why
+	vec4 lightRay = lightPos - viewPos;
+
+	n_lightRay = normalize(lightRay);
+
+	//Implementing Attenuaton
+	float dist = length(lightRay);
+
+	float atten = max((1 / (1 + attenConst*pow(dist, 2))), .4);
+
+	float diff_coef = max(dot(normalize(transformedNormal), n_lightRay), 0.0);
+
+	//Light size seems to be in the range of 0 to 100, but it is more useful as a number between 0 and 1
+	vec4 result = diff_coef * lightCol * (lightSize/100) * atten;
+	
+	return result;
+}
+
+//Get the specular coeffent
+float getSpecular(vec4 lightPos, float exponenet)
+{
+
+	vec4 viewerDir_normalized = normalize(viewPos);
+
+	//Leaving this here to show how the math works
+	//vec4 reflectDir = 2 * (dot(normalize(transformedNormal), n_lightRay)) * normalize(transformedNormal) - n_lightRay;
+
+	vec4 reflectDir = reflect(-n_lightRay, normalize(transformedNormal));
+
+	//Implementing Attenuaton
+	vec4 lightRay = lightPos - viewPos;
+	float dist = length(lightRay);
+
+	float atten = max((1 / (1 + attenConst*pow(dist, 2))), .4);
+
+
+	return pow(max(dot(viewerDir_normalized, reflectDir), 0.0), exponenet) * atten;
+}
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	
+	vec4 allDefuse;	
+	vec4 allSpecular;	
+
+	
+	//Get the sum of defuse and specular for all lights
+	for(int i = 0; i < uLightCt; i++)
+	{
+		allDefuse += getLight(uLightCol[i], uLightPos[i], uLightSz[i]);
+		allSpecular += getSpecular(uLightPos[i], uLightSz[i]) * uLightCol[i];
+	}
+
+
+
+	//Get object texture color
+	vec4 objectColor = texture(uImage0, texCoord.xy);
+
+	
+	//Add together all types of light for phong 
+	rtFragColor = vec4(((ambent + allDefuse + specularStrength * allSpecular) * objectColor).xyz, 1.0);
+
+	rtFragColor = vec4(rtFragColor.xyz, 1);
+	outPosition = viewPos;
+	outNormal = vec4(normalize(transformedNormal.xyz), 1);
+	outTextureCoord = texCoord;
+	outDiffTexture = texture(uTex_dm, texCoord.xy);
+	outSpecularMap = texture(uTex_sm, texCoord.xy);
+	outDiffLighting = vec4(allDefuse.xyz, 1);
+	outSpecularLighting = vec4(allSpecular.xyz, 1);
 }
