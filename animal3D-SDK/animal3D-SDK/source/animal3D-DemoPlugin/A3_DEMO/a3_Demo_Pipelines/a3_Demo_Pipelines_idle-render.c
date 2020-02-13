@@ -546,6 +546,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
+	float gauss[5] = { 0.0625, 0.25, 0.375, 0.25, 0.0625 };
 	// ****TO-DO: 
 	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
 	//		-> 1) activate framebuffer for writing
@@ -553,28 +554,28 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 3) send blur axis as uniform (2D vector)
 	//		-> 4) draw full-screen quad (already active
 	sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
-	/*
+	
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	???
-	*/
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+	a3vertexDrawableRenderActive();
+	
 
 	// ****TO-DO: 
 	//	-> 3.1c: repeat previous pass but using vertical axis
 	sampleAxisV = a3vec2_y;	// delete this line; variable is already initialized
-	/*
+
 	currentPass = pipelines_passBlurV_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	???
-	*/
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+	a3vertexDrawableRenderActive();
+	
 
 	// ****TO-DO: 
 	//	-> 4.1f: repeat bright pass and blur passes on smaller FBOs

@@ -629,13 +629,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 3.1a: setup Gaussian blur program
-	/*
+	
 	// texturing with Gaussian blurring
 	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blur");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blurGaussian_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 4.1a: setup screen blending program
 	/*

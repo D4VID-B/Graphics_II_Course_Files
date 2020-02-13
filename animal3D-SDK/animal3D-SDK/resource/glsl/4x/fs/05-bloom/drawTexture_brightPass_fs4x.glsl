@@ -40,9 +40,9 @@ void main()
 	vec4 color = texture(uImage0, passTexcoord.xy);
 
 
-	float why = dot(color.rgb, vec3(0.299, 0.587, 0.144));
+	float lum = dot(color.rgb, vec3(0.299, 0.587, 0.144));
 
-	color = color * 4.0 * smoothstep(0.8, 1.2, why);
+	color = color * 4.0 * smoothstep(0.8, 1.2, lum);
 
 	rtFragColor = color;
 }
