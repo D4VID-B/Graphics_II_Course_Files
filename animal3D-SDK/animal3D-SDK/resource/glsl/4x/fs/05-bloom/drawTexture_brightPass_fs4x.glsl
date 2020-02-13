@@ -29,12 +29,20 @@
 //	1) implement brightness function (e.g. luminance)
 //	2) use brightness to implement tone mapping or just filter out dark areas
 
-uniform sampler2D uImage00;
+uniform sampler2D uImage0;
 
-layout (location = 0) out vec4 rtFragColor;
+layout(location = 0) out vec4 rtFragColor;
+in vec4 passTexcoord;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+
+	vec4 color = texture(uImage0, passTexcoord.xy);
+
+
+	float why = dot(color.rgb, vec3(0.299, 0.587, 0.144));
+
+	color = color * 4.0 * smoothstep(0.8, 1.2, why);
+
+	rtFragColor = color;
 }
