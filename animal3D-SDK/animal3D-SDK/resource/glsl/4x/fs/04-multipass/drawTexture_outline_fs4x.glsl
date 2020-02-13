@@ -57,7 +57,7 @@ in vec4 coord;
 //Function that creates a 3x3 kernel (stored in an array), through sampling of 9 screen regions
 void make_kernel(inout vec4 kernel_array[9], sampler2D image, vec2 coordinate)
 {
-//Calculating the dimantions of the onput texture
+//Calculating the dimentions of the onput texture
 	float width = 1.0 / textureSize(image, 0).x;
 	float height = 1.0 / textureSize(image, 0).y;
 

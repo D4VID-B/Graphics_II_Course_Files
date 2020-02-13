@@ -40,17 +40,21 @@ uniform float[5] uGaussX;
 layout (location = 0) out vec4 rtFragColor;
 in vec4 passTexcoord;
 
-void populateKernel(inout float[5] uGaussX, sampler2D image, vec2 coord)
+
+
+vec4 populateKernel(float[5] uGaussX, sampler2D image, vec2 coord)
 {
-float axis = 1/ dot(uSize, uAxis);
+vec4 color;
 
-	uGaussX[0] = texture2D(image, coord + vec2( -width, -height));
-	uGaussX[1] = texture2D(image, coord + vec2(0.0, -height));
-	uGaussX[2] = texture2D(image, coord + );
-	uGaussX[3] = texture2D(image, coord);
-	uGaussX[4] = texture2D(image, coord + vec2(  width, -height));
-	uGaussX[5] = texture2D(image, coord + vec2(  width, 0.0));
+float offset = 1 / dot(uSize, uAxis);
 
+	color += texture2D(image, coord + vec2( offset, offset)*uAxis) * uGaussX[0];
+	color += texture2D(image, coord + vec2(0.0, offset)*uAxis) * uGaussX[1];
+	color += texture2D(image, coord) * uGaussX[2];
+	color += texture2D(image, coord + vec2( -offset, -offset)*uAxis) * uGaussX[3];
+	color += texture2D(image, coord + vec2( -offset, 0.0)*uAxis) * uGaussX[4];
+
+	return color;
 }
 
 

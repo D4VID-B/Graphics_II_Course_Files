@@ -33,9 +33,10 @@
 uniform sampler2D uImage00;
 
 layout (location = 0) out vec4 rtFragColor;
+in vec4 passTexcoord;
+
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE YELLOW
-	rtFragColor = vec4(1.0, 1.0, 0.0, 1.0);
+rtFragColor = texture(uImage00, passTexcoord.xy);
 }
