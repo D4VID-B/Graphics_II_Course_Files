@@ -46,9 +46,9 @@ float axis = 1/ dot(uSize, uAxis);
 
 	uGaussX[0] = texture2D(image, coord + vec2( -width, -height));
 	uGaussX[1] = texture2D(image, coord + vec2(0.0, -height));
-	uGaussX[2] = texture2D(image, coord + vec2(  width, -height));
+	uGaussX[2] = texture2D(image, coord + );
 	uGaussX[3] = texture2D(image, coord);
-	uGaussX[4] = texture2D(image, coord);
+	uGaussX[4] = texture2D(image, coord + vec2(  width, -height));
 	uGaussX[5] = texture2D(image, coord + vec2(  width, 0.0));
 
 }
