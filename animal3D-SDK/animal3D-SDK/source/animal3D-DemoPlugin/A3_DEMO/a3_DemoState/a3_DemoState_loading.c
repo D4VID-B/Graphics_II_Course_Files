@@ -871,7 +871,6 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 			targets_composite, colorType_composite, a3fbo_depthDisable,
 			frameWidth1, frameHeight1);
 
-		// ****TO-DO: 
 		//	-> 2.1c: set up half-size framebuffers
 		
 		//	-> post-processing, color only
