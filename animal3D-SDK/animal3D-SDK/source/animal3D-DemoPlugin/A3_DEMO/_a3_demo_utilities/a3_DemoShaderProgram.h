@@ -82,6 +82,8 @@ extern "C"
 				uLightSzInvSq,				// light size inverse squared
 				uLightPos,					// light position (in whatever space makes sense)
 				uLightCol,					// light color
+				uGaussX,
+				uGaussY,
 				uColor;						// uniform color (used in whatever context is needed)
 
 			a3i32
