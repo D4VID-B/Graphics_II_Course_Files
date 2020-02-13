@@ -31,11 +31,31 @@
 //	3) sample texture using Gaussian blur function and output result
 
 uniform sampler2D uImage00;
+uniform vec2 uAxis;
+uniform vec2 uSize;
+
+uniform float[5] uGaussX;
+
 
 layout (location = 0) out vec4 rtFragColor;
+in vec4 passTexcoord;
+
+void populateKernel(inout float[5] uGaussX, sampler2D image, vec2 coord)
+{
+float axis = 1/ dot(uSize, uAxis);
+
+	uGaussX[0] = texture2D(image, coord + vec2( -width, -height));
+	uGaussX[1] = texture2D(image, coord + vec2(0.0, -height));
+	uGaussX[2] = texture2D(image, coord + vec2(  width, -height));
+	uGaussX[3] = texture2D(image, coord);
+	uGaussX[4] = texture2D(image, coord);
+	uGaussX[5] = texture2D(image, coord + vec2(  width, 0.0));
+
+}
+
+
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+rtFragColor = texture(uImage00, passTexcoord.xy);
 }
