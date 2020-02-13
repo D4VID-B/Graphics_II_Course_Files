@@ -61,5 +61,6 @@ float offset = 1 / dot(uSize, uAxis);
 
 void main()
 {
-rtFragColor = texture(uImage00, passTexcoord.xy);
+	
+	rtFragColor = vec4(uGaussX[2],uGaussX[2], uGaussX[2], 1.0);
 }

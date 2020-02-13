@@ -36,7 +36,7 @@ in vec4 passTexcoord;
 
 void main()
 {
-
+	
 	vec4 color = texture(uImage0, passTexcoord.xy);
 
 
