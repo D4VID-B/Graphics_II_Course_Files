@@ -42,25 +42,16 @@ in vec4 passTexcoord;
 
 
 
-vec3 applyGauss(float[5] gauss, sampler2D image, vec2 coord)
+vec3 applyGauss(float[5] gauss, vec2 axis, sampler2D image, vec2 coord)
 {
 	vec2 size = 1.0 / textureSize(uImage00, 0);
 	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
 	
-	
-	//Once the uniform starts getting passed in use that instead. I have no idea why I can't use unif
-	vec2 axis = vec2(0.0, 1.0);
-	
-	
-
-	//Using uGaussX causes everything to break even though it does contain the correct values (I checked by outputting as colors)
-	float gaussTest[5] = float[5](.0625, .25, .375, .25, .0625);
-
-	color += texture(image, (coord -  size*axis * 2)) * gaussTest[0];
-	color += texture(image, (coord -  size * axis)) * gaussTest[1];
-	color += texture(image, (coord)) * gaussTest[2];
-	color += texture(image, (coord +  size * axis)) * gaussTest[3];
-	color += texture(image, (coord +  size * axis * 2)) * gaussTest[4];
+	color += texture(image, (coord -  size*axis * 2)) * gauss[0];
+	color += texture(image, (coord -  size * axis)) * gauss[1];
+	color += texture(image, (coord)) * gauss[2];
+	color += texture(image, (coord +  size * axis)) * gauss[3];
+	color += texture(image, (coord +  size * axis * 2)) * gauss[4];
 
 	return color.xyz;
 }
@@ -69,11 +60,22 @@ vec3 applyGauss(float[5] gauss, sampler2D image, vec2 coord)
 
 void main()
 {
+	//Using uGaussX causes everything to break even though it does contain the correct values (I checked by outputting as colors)
+	float gaussTest[5] = float[5](.0625, .25, .375, .25, .0625);
+
+	//Once the uniform starts getting passed in use that instead. I have no idea why I can't use unif
 	
-
+	//vec2(uBlurAxis[0], uBlurAxis[1]);
+	vec2 testAxis = vec2(1.0, 0.0);
+	vec2 blurAxis = vec2(uBlurAxis[0], uBlurAxis[1]);
 	//float offset = 1 / dot(vec2(size), uAxis);
-	rtFragColor = vec4(applyGauss(uGaussX, uImage00, passTexcoord.xy), 1.0);
+	rtFragColor = vec4(applyGauss(gaussTest,blurAxis , uImage00, passTexcoord.xy), 1.0);
 	//rtFragColor = vec4(uBlurAxis[0], uBlurAxis[1], 0, 1.0);
+	//rtFragColor = vec4(uBlurAxis[0], uBlurAxis[1], 0, 1); //Outputs red on horozontal and green on vertical as expected
+	vec2 size = 1.0 / textureSize(uImage00, 0);
 
+	//rtFragColor = texture(uImage00, (passTexcoord.xy +  size * axis)); // Outputs expected result
+	//
+	//rtFragColor = texture(uImage00, (passTexcoord.xy +  size * axis));
 	
 }
