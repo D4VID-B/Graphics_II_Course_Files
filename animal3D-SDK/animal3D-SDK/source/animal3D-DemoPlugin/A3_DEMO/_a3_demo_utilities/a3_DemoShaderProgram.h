@@ -83,6 +83,7 @@ extern "C"
 				uLightPos,					// light position (in whatever space makes sense)
 				uLightCol,					// light color
 				uGaussX,
+				uBlurAxis,
 				uColor;						// uniform color (used in whatever context is needed)
 
 			a3i32

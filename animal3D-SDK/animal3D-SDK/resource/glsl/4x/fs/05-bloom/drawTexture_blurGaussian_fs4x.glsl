@@ -31,7 +31,7 @@
 //	3) sample texture using Gaussian blur function and output result
 
 uniform sampler2D uImage00;
-uniform vec2 uAxis;
+uniform float[2] uBlurAxis; //I can't figure out how to pass in vec2
 uniform vec2 uSize;
 
 uniform float[5] uGaussX;
@@ -42,19 +42,27 @@ in vec4 passTexcoord;
 
 
 
-vec4 populateKernel(float[5] uGaussX, sampler2D image, vec2 coord)
+vec3 applyGauss(float[5] gauss, sampler2D image, vec2 coord)
 {
-vec4 color;
+	vec2 size = 1.0 / textureSize(uImage00, 0);
+	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+	
+	
+	//Once the uniform starts getting passed in use that instead. I have no idea why I can't use unif
+	vec2 axis = vec2(0.0, 1.0);
+	
+	
 
-float offset = 1 / dot(uSize, uAxis);
+	//Using uGaussX causes everything to break even though it does contain the correct values (I checked by outputting as colors)
+	float gaussTest[5] = float[5](.0625, .25, .375, .25, .0625);
 
-	color += texture2D(image, coord + vec2( offset, offset)*uAxis) * uGaussX[0];
-	color += texture2D(image, coord + vec2(0.0, offset)*uAxis) * uGaussX[1];
-	color += texture2D(image, coord) * uGaussX[2];
-	color += texture2D(image, coord + vec2( -offset, -offset)*uAxis) * uGaussX[3];
-	color += texture2D(image, coord + vec2( -offset, 0.0)*uAxis) * uGaussX[4];
+	color += texture(image, (coord -  size*axis * 2)) * gaussTest[0];
+	color += texture(image, (coord -  size * axis)) * gaussTest[1];
+	color += texture(image, (coord)) * gaussTest[2];
+	color += texture(image, (coord +  size * axis)) * gaussTest[3];
+	color += texture(image, (coord +  size * axis * 2)) * gaussTest[4];
 
-	return color;
+	return color.xyz;
 }
 
 
@@ -62,5 +70,10 @@ float offset = 1 / dot(uSize, uAxis);
 void main()
 {
 	
-	rtFragColor = vec4(uGaussX[2],uGaussX[2], uGaussX[2], 1.0);
+
+	//float offset = 1 / dot(vec2(size), uAxis);
+	rtFragColor = vec4(applyGauss(uGaussX, uImage00, passTexcoord.xy), 1.0);
+	//rtFragColor = vec4(uBlurAxis[0], uBlurAxis[1], 0, 1.0);
+
+	
 }

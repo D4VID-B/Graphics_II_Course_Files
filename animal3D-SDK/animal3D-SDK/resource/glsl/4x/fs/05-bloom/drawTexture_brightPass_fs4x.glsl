@@ -36,7 +36,10 @@ in vec4 passTexcoord;
 
 void main()
 {
-	
+	float width = 1.0 / textureSize(uImage0, 0).x;
+	float height = 1.0 / textureSize(uImage0, 0).y;
+
+
 	vec4 color = texture(uImage0, passTexcoord.xy);
 
 

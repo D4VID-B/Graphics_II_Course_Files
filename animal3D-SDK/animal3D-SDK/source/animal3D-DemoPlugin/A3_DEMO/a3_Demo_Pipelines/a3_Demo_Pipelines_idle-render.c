@@ -547,6 +547,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
 	float gauss[5] = { 0.0625, 0.25, 0.375, 0.25, 0.0625 };
+	float xBlurAxis[2] = { 1.0, 0.0};
+	float yBlurAxis[2] = { 0.0, 1.0 };
 	// ****TO-DO: 
 	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
 	//		-> 1) activate framebuffer for writing
@@ -555,12 +557,14 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 4) draw full-screen quad (already active
 	sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
 	
+
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uBlurAxis, 2, xBlurAxis);
 	a3vertexDrawableRenderActive();
 	
 
@@ -574,6 +578,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uBlurAxis, 2, yBlurAxis);
 	a3vertexDrawableRenderActive();
 	
 
