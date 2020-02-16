@@ -259,13 +259,13 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
 
-		demoState->fbo_post_c16_4fr + 0,
+		/*demoState->fbo_post_c16_4fr + 0,
 		demoState->fbo_post_c16_4fr + 1,
 		demoState->fbo_post_c16_4fr + 2,
 
 		demoState->fbo_post_c16_8fr + 0,
 		demoState->fbo_post_c16_8fr + 1,
-		demoState->fbo_post_c16_8fr + 2,
+		demoState->fbo_post_c16_8fr + 2,*/
 		
 		demoState->fbo_composite_c16 + 0,
 	};
@@ -284,22 +284,22 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
 		
 
-		{ demoState->fbo_post_c16_4fr + 0, 0, },
+		/*{ demoState->fbo_post_c16_4fr + 0, 0, },
 		{ demoState->fbo_post_c16_4fr + 1, 0, },
 		{ demoState->fbo_post_c16_4fr + 2, 0, },
 
 		{ demoState->fbo_post_c16_8fr + 0, 0, },
 		{ demoState->fbo_post_c16_8fr + 1, 0, },
-		{ demoState->fbo_post_c16_8fr + 2, 0, },
+		{ demoState->fbo_post_c16_8fr + 2, 0, },*/
 		
 
 		
 		// ****TO-DO: 
 		//	-> 2.1f: uncomment blend pass read list with half-size FBO and original composite
-	//	{ demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, 0, 0, },
+		{ demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, 0, 0, },
 		// ****TO-DO: 
 		//	-> 4.1e: replace above blend pass read list with extended read list below
-		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
+	//	{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
 	};
 
 	// target info
@@ -319,8 +319,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// pixel size and effect axis
 	a3vec2 pixelSize = a3vec2_one;
-	a3vec2 sampleAxisH = a3vec2_x;
-	a3vec2 sampleAxisV = a3vec2_y;
+	a3vec2 sampleAxisH = a3vec2_x; //sampleAxisH ==> Unreferenced local variable
+	a3vec2 sampleAxisV = a3vec2_y; //sampleAxisV ==> Unreferenced local variable
 
 
 	// bias matrix
@@ -546,7 +546,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
-	float gauss[5] = { 0.0625, 0.25, 0.375, 0.25, 0.0625 };
+	
 	// ****TO-DO: 
 	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
 	//		-> 1) activate framebuffer for writing
@@ -555,12 +555,16 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 4) draw full-screen quad (already active
 	sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
 	
+	float gauss_1D_kernel[5] = { 1 / 16, 4 / 16, 6 / 16, 4 / 16, 1 / 16 };
+	//float gauss_1D_kernel = sampleAxisH.x;
+
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
+	
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uGaussX, 5, gauss_1D_kernel);
 	a3vertexDrawableRenderActive();
 	
 
@@ -571,15 +575,16 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentPass = pipelines_passBlurV_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
+	
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uGaussX, 5, gauss_1D_kernel);
 	a3vertexDrawableRenderActive();
 	
 
 	// ****TO-DO: 
 	//	-> 4.1f: repeat bright pass and blur passes on smaller FBOs
-	currentPass = pipelines_passBright_4;
+	/*currentPass = pipelines_passBright_4;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 
@@ -593,7 +598,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3vertexDrawableRenderActive();
+	a3vertexDrawableRenderActive();*/
 
 
 	// bloom composite

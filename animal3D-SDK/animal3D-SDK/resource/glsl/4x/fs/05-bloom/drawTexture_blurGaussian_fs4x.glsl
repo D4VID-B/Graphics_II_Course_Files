@@ -42,17 +42,39 @@ in vec4 passTexcoord;
 
 
 
-vec4 populateKernel(float[5] uGaussX, sampler2D image, vec2 coord)
+vec4 populateKernel(float[5] uGaussX, sampler2D image) //Using https://www.taylorpetrick.com/blog/post/convolution-part4 and outline shader as reference
 {
-vec4 color;
+vec4 color = vec4(0.0);
+float offset = 0;
 
-float offset = 1 / dot(uSize, uAxis);
+//while not very efficient becuase of the if() statement, the only other alternative would be to use a secod, virtually identical shader, which I am not sure we can 
+if(uAxis.x == 0)
+{
+ offset = 1 / uSize.y;
 
-	color += texture2D(image, coord + vec2( offset, offset)*uAxis) * uGaussX[0];
-	color += texture2D(image, coord + vec2(0.0, offset)*uAxis) * uGaussX[1];
-	color += texture2D(image, coord) * uGaussX[2];
-	color += texture2D(image, coord + vec2( -offset, -offset)*uAxis) * uGaussX[3];
-	color += texture2D(image, coord + vec2( -offset, 0.0)*uAxis) * uGaussX[4];
+ 	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset * 2)) * uGaussX[0];
+	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset)) * uGaussX[1];
+	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
+	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset)) * uGaussX[3];
+	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset * 2)) * uGaussX[4];
+
+}
+else if(uAxis.y == 0)
+{
+ offset = 1 / uSize.x;
+
+ 	color += texture2D(image, vec2( passTexcoord.x - offset * 2, passTexcoord.y)) * uGaussX[0];
+	color += texture2D(image, vec2( passTexcoord.x - offset, passTexcoord.y)) * uGaussX[1];
+	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
+	color += texture2D(image, vec2( passTexcoord.x + offset, passTexcoord.y)) * uGaussX[3];
+	color += texture2D(image, vec2( passTexcoord.x + offset * 2, passTexcoord.y)) * uGaussX[4];
+
+}
+else
+{
+color = vec4(1.0);
+}
+
 
 	return color;
 }
@@ -61,5 +83,12 @@ float offset = 1 / dot(uSize, uAxis);
 
 void main()
 {
-rtFragColor = texture(uImage00, passTexcoord.xy);
+
+	vec4 blur = populateKernel(uGaussX, uImage00);
+	
+	blur.a = 1.0;
+	
+	
+	rtFragColor = texture(uImage00, blur.xy);
+	//rtFragColor = blur;
 }
