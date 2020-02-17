@@ -42,51 +42,51 @@ in vec4 passTexcoord;
 
 
 
-vec4 populateKernel(float[5] uGaussX, sampler2D image) //Using https://www.taylorpetrick.com/blog/post/convolution-part4 and outline shader as reference
+//vec4 populateKernel(float[5] uGaussX, sampler2D image) //Using https://www.taylorpetrick.com/blog/post/convolution-part4 and outline shader as reference
 vec3 applyGauss(float[5] gauss, vec2 axis, sampler2D image, vec2 coord)
 {
 	vec2 size = 1.0 / textureSize(uImage00, 0);
 	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-	
+//	float offset = 0;
+
 	color += texture(image, (coord -  size*axis * 2)) * gauss[0];
 	color += texture(image, (coord -  size * axis)) * gauss[1];
 	color += texture(image, (coord)) * gauss[2];
 	color += texture(image, (coord +  size * axis)) * gauss[3];
 	color += texture(image, (coord +  size * axis * 2)) * gauss[4];
-vec4 color = vec4(0.0);
-float offset = 0;
 
 	return color.xyz;
+
 //while not very efficient becuase of the if() statement, the only other alternative would be to use a secod, virtually identical shader, which I am not sure we can 
-if(uAxis.x == 0)
-{
- offset = 1 / uSize.y;
-
- 	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset * 2)) * uGaussX[0];
-	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset)) * uGaussX[1];
-	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
-	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset)) * uGaussX[3];
-	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset * 2)) * uGaussX[4];
-
-}
-else if(uAxis.y == 0)
-{
- offset = 1 / uSize.x;
-
- 	color += texture2D(image, vec2( passTexcoord.x - offset * 2, passTexcoord.y)) * uGaussX[0];
-	color += texture2D(image, vec2( passTexcoord.x - offset, passTexcoord.y)) * uGaussX[1];
-	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
-	color += texture2D(image, vec2( passTexcoord.x + offset, passTexcoord.y)) * uGaussX[3];
-	color += texture2D(image, vec2( passTexcoord.x + offset * 2, passTexcoord.y)) * uGaussX[4];
-
-}
-else
-{
-color = vec4(1.0);
-}
-
-
-	return color;
+//if(uAxis.x == 0)
+//{
+// offset = 1 / uSize.y;
+//
+// 	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset * 2)) * uGaussX[0];
+//	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y - offset)) * uGaussX[1];
+//	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
+//	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset)) * uGaussX[3];
+//	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y + offset * 2)) * uGaussX[4];
+//
+//}
+//else if(uAxis.y == 0)
+//{
+// offset = 1 / uSize.x;
+//
+// 	color += texture2D(image, vec2( passTexcoord.x - offset * 2, passTexcoord.y)) * uGaussX[0];
+//	color += texture2D(image, vec2( passTexcoord.x - offset, passTexcoord.y)) * uGaussX[1];
+//	color += texture2D(image, vec2( passTexcoord.x, passTexcoord.y)) * uGaussX[2];
+//	color += texture2D(image, vec2( passTexcoord.x + offset, passTexcoord.y)) * uGaussX[3];
+//	color += texture2D(image, vec2( passTexcoord.x + offset * 2, passTexcoord.y)) * uGaussX[4];
+//
+//}
+//else
+//{
+//color = vec4(1.0);
+//}
+//
+//
+//	return color;
 }
 
 
@@ -98,25 +98,18 @@ void main()
 
 	//Once the uniform starts getting passed in use that instead. I have no idea why I can't use unif
 	
-	//vec2(uBlurAxis[0], uBlurAxis[1]);
+
 	vec2 testAxis = vec2(1.0, 0.0);
 	vec2 blurAxis = vec2(uBlurAxis[0], uBlurAxis[1]);
-	//float offset = 1 / dot(vec2(size), uAxis);
-	rtFragColor = vec4(applyGauss(gaussTest,blurAxis , uImage00, passTexcoord.xy), 1.0);
-	//rtFragColor = vec4(uBlurAxis[0], uBlurAxis[1], 0, 1.0);
-	//rtFragColor = vec4(uBlurAxis[0], uBlurAxis[1], 0, 1); //Outputs red on horozontal and green on vertical as expected
-	vec2 size = 1.0 / textureSize(uImage00, 0);
+	
+	//rtFragColor = vec4(applyGauss(gaussTest, testAxis , uImage00, passTexcoord.xy), 1.0);
+	rtFragColor = vec4(uBlurAxis[1], uBlurAxis[0], 0, 1);
+	//vec2 size = 1.0 / textureSize(uImage00, 0);	
 
-	//rtFragColor = texture(uImage00, (passTexcoord.xy +  size * axis)); // Outputs expected result
-	//
-	//rtFragColor = texture(uImage00, (passTexcoord.xy +  size * axis));
+	//vec4 blur = populateKernel(uGaussX, uImage00);
 	
-
-	vec4 blur = populateKernel(uGaussX, uImage00);
-	
-	blur.a = 1.0;
+	//blur.a = 1.0;
 	
 	
-	rtFragColor = texture(uImage00, blur.xy);
-	//rtFragColor = blur;
+	//rtFragColor = texture(uImage00, blur.xy);
 }
