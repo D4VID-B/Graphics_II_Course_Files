@@ -546,7 +546,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
-	float gauss[5] = { 0.0625, 0.25, 0.375, 0.25, 0.0625 };
+
 	float xBlurAxis[2] = { 1.0, 0.0};
 	float yBlurAxis[2] = { 0.0, 1.0 };
 	// ****TO-DO: 
@@ -564,8 +564,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uBlurAxis, 2, xBlurAxis);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 	
 
@@ -579,9 +578,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uGaussX, 5, gauss);
-
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uBlurAxis, 2, yBlurAxis);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, a3vec2_y.v);
 	a3vertexDrawableRenderActive();
 	
 
