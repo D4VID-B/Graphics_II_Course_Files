@@ -884,14 +884,14 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		//	-> 4.1b: set up smaller framebuffers
 		
 		fbo = demoState->fbo_post_c16_4fr + i;
-		a3framebufferCreate(fbo, "fbo:halfSize",
+		a3framebufferCreate(fbo, "fbo:quarterSize",
 			targets_post, colorType_post, a3fbo_depthDisable,
-			frameWidth2, frameHeight2);
+			frameWidth4, frameHeight4);
 
 		fbo = demoState->fbo_post_c16_8fr + i;
-		a3framebufferCreate(fbo, "fbo:halfSize",
+		a3framebufferCreate(fbo, "fbo:eighthSize",
 			targets_post, colorType_post, a3fbo_depthDisable,
-			frameWidth2, frameHeight2);
+			frameWidth8, frameHeight8);
 		
 	}
 
