@@ -35,7 +35,7 @@ uniform float[2] uBlurAxis; //I can't figure out how to pass in vec2
 uniform vec2 uSize;
 
 uniform float[5] uGaussX;
-
+uniform vec2 uAxis;
 
 layout (location = 0) out vec4 rtFragColor;
 in vec4 passTexcoord;
@@ -103,7 +103,7 @@ void main()
 	vec2 blurAxis = vec2(uBlurAxis[0], uBlurAxis[1]);
 	
 	//rtFragColor = vec4(applyGauss(gaussTest, testAxis , uImage00, passTexcoord.xy), 1.0);
-	rtFragColor = vec4(uBlurAxis[1], uBlurAxis[0], 0, 1);
+	rtFragColor = vec4(uAxis.x, uAxis.y, 1, 1);
 	//vec2 size = 1.0 / textureSize(uImage00, 0);	
 
 	//vec4 blur = populateKernel(uGaussX, uImage00);
