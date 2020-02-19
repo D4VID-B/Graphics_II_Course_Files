@@ -36,9 +36,6 @@ in vec4 passTexcoord;
 
 void main()
 {
-	float width = 1.0 / textureSize(uImage0, 0).x;
-	float height = 1.0 / textureSize(uImage0, 0).y;
-
 
 	vec4 color = texture(uImage0, passTexcoord.xy);
 
@@ -46,6 +43,8 @@ void main()
 	float lum = dot(color.rgb, vec3(0.299, 0.587, 0.144));
 
 	color = color * 4.0 * smoothstep(0.8, 1.2, lum);
+
+	color.a = 1.0;
 
 	rtFragColor = color;
 }

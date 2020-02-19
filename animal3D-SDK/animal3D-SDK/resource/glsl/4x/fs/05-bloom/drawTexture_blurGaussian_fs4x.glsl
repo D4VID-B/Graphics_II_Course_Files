@@ -37,9 +37,8 @@ uniform vec2 uAxis;
 layout (location = 0) out vec4 rtFragColor;
 in vec4 passTexcoord;
 
+ //Using https://www.taylorpetrick.com/blog/post/convolution-part4 and outline shader as reference
 
-
-//vec4 populateKernel(float[5] uGaussX, sampler2D image) //Using https://www.taylorpetrick.com/blog/post/convolution-part4 and outline shader as reference
 vec3 applyGauss(float[5] gauss, vec2 axis, sampler2D image, vec2 coord)
 {
 	vec2 size = 1.0 / textureSize(uImage00, 0);
