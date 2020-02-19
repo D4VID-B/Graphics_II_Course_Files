@@ -31,9 +31,9 @@
 //	3) use screen function to sample input textures
 
 
-uniform sampler2D uImage00; // ???
-uniform sampler2D uImage01; // ???
-uniform sampler2D uImage02; //Blur output?
+uniform sampler2D uImage00; // Bright/Blur 1/2
+uniform sampler2D uImage01; // Bright/Blur 1/4
+uniform sampler2D uImage02; // Bright/Blur 1/8
 uniform sampler2D uImage03; //Composite 
 uniform sampler2D uImage04; //Gray gradient thing
 uniform sampler2D uImage05; // ???
@@ -56,4 +56,5 @@ return output_bight;
 void main()
 {
 	rtFragColor = screen(uImage00, uImage01, uImage02, uImage03);
+	//rtFragColor = texture(uImage02, passTexcoord.xy);
 }
