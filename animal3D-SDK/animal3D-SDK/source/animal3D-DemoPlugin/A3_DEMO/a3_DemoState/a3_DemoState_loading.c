@@ -666,13 +666,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 3.1a: uncomment deferred shading composite program
-	/*
+	
 	// draw Phong shading deferred
 	currentDemoProg = demoState->prog_drawPhong_multi_deferred;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-def");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_deferred_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 4.1a: uncomment deferred light volume program
 	/*
