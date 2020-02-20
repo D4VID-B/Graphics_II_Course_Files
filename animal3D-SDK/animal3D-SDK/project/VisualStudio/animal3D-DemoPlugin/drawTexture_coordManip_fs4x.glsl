@@ -18,30 +18,32 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	passColor_transform_vs4x.glsl
-	Transform position attribute and pass color attribute down the pipeline.
+	drawTexture_coordManip_fs4x.glsl
+	Draw texture sample after manipulating texcoord.
 */
 
 #version 410
 
 // ****TO-DO: 
-//	1) declare uniform variable for MVP matrix; see demo code for hint
-//	2) correctly transform input position by MVP matrix
-//	3) declare attribute for vertex color input
-//	4) declare varying to pass color input to fragment shader
-//	5) assign vertex color input to varying
+//	1) declare uniform variable for texture; see demo code for hints
+//	2) declare inbound varying for texture coordinate
+//	3) modify texture coordinate in some creative way
+//	4) sample texture using modified texture coordinate
+//	5) assign sample to output color
 
-layout (location = 0) in vec4 aPosition;
-layout (location = 3) in vec4 aColor;
+uniform sampler2D screenTexture;
 
-out vec4 vColor;
+in vec4 coord;
 
-uniform mat4 uMVP;
+uniform double uTime;
 
+out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = uMVP*aPosition;
-	vColor = aColor;
+	vec2 tempUV = vec2(coord.x, coord.y+sin(coord.x*50.0) * -.05);
+
+	rtFragColor =  texture2D(screenTexture, tempUV);
+	 
+	rtFragColor = vec4(0, 1.0, 0, 1.0);
 }

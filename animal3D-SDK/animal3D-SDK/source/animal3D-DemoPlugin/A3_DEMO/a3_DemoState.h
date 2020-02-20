@@ -321,6 +321,7 @@ extern "C"
 					prog_drawTexture[1];						// draw texture
 				a3_DemoStateShaderProgram
 					prog_drawTexture_coordManip[1],				// draw texture with manipulated texture coordinates
+					prog_drawTexture_coordColorManip[1],		// draw texture with manipulated texture coordinates and color
 					prog_drawTexture_colorManip[1],				// draw texture with manipulated output color
 					prog_drawNonphoto_multi_mrt[1],				// draw non-photorealistic shading model, multiple lights, MRT
 					prog_drawPhong_multi_mrt[1],				// draw Phong shading model, multiple lights, MRT

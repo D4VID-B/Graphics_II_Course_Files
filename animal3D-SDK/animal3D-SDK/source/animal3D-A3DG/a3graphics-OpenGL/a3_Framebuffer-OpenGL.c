@@ -218,7 +218,7 @@ a3ret a3framebufferBindColorTexture(const a3_Framebuffer *framebuffer, const a3_
 		return 1;
 	}
 	return -1;
-}
+} 
 
 a3ret a3framebufferBindDepthTexture(const a3_Framebuffer *framebuffer, const a3_TextureUnit unit)
 {
