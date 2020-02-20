@@ -38,7 +38,6 @@
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
 
-in vec4 vTexcoord;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
@@ -46,12 +45,68 @@ layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
 layout (location = 7) out vec4 rtSpecularLightTotal;
 
+//g-buffer textures as unifrom samplers
+uniform sampler2D uImage00;
+uniform sampler2D uImage01; //
+uniform sampler2D uImage02; //
+uniform sampler2D uImage03; //
+uniform sampler2D uImage04;
+uniform sampler2D uImage05;
+uniform sampler2D uImage06;
+uniform sampler2D uImage07;
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
+uniform float uLightSz[4];
+uniform int uLightCt;
+uniform vec4 uColor;
+
+in vec4 viewPosition;
+in vec4 normal;
+in vec4 vTexcoord;
+
+
+vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
+{
+float diff = max(dot(normal, lightDirection), 0.0);
+return diff * lightColor * lightSize/100;
+}
+
+vec4 getSpecular(vec4 lightDirection, vec4 lightColor, vec4 lightPosition, float lightSize)
+{
+vec4 viewDirection = normalize(-viewPosition);
+vec4 reflectionDirection = reflect(-lightDirection, normal);
+float spec = pow(max(dot(viewDirection, reflectionDirection), 0.0), 4);
+vec4 specular = spec * lightColor * lightSize/100;
+return specular;
+}
+
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = vec4(0.0, 0.0, 1.0, 1.0);
-	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
-	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
+	vec4 diffuse_map = texture(uTex_dm, vTexcoord.xy);
+	vec4 specular_map = texture(uTex_sm, vTexcoord.xy);
+	vec4 ambient = uColor * 0.01;
+	vec4 lightDirection;
+	vec4 attenuation;
+	vec4 specular;
+	vec4 diffuse;
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+	lightDirection = normalize(uLightPos[i] - viewPosition);
+	attenuation += getLambert(lightDirection, uLightCol[i], uLightSz[i]);
+	specular += getSpecular(lightDirection, uLightCol[i], uLightPos[i], uLightSz[i]);
+	}
+
+	specular = specular * specular_map;
+	diffuse = attenuation * diffuse_map;
+
+	rtFragColor = specular * diffuse * ambient;
+	rtDiffuseMapSample = diffuse_map;
+	rtSpecularMapSample = specular_map;
+	rtDiffuseLightTotal = diffuse;
+	rtSpecularLightTotal = specular;
 }
