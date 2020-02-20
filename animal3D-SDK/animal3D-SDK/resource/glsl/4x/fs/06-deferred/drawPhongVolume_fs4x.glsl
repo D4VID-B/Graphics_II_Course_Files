@@ -42,9 +42,65 @@ flat in int vInstanceID;
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
 
+//g-buffer textures as samplers
+uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
+uniform float uLightSz[4];
+uniform int uLightCt;
+uniform vec4 uColor;
+
+in vec4 viewPosition;
+in vec4 normal;
+in vec4 vTexcoord;
+
+
+vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
+{
+float diff = max(dot(normal, lightDirection), 0.0);
+return diff * lightColor * lightSize/100;
+}
+
+vec4 getSpecular(vec4 lightDirection, vec4 lightColor, vec4 lightPosition, float lightSize)
+{
+vec4 viewDirection = normalize(-viewPosition);
+vec4 reflectionDirection = reflect(-lightDirection, normal);
+float spec = pow(max(dot(viewDirection, reflectionDirection), 0.0), 4);
+vec4 specular = spec * lightColor * lightSize/100;
+return specular;
+}
+
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtDiffuseLight = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLight = vec4(1.0, 0.0, 1.0, 1.0);
+	vec4 diffuse_map = texture(uTex_dm, vTexcoord.xy);
+	vec4 specular_map = texture(uTex_sm, vTexcoord.xy);
+	vec4 ambient = uColor * 0.01;
+	vec4 lightDirection;
+	vec4 attenuation;
+	vec4 specular;
+	vec4 diffuse;
+
+	
+	lightDirection = normalize(uLightPos[0] - viewPosition);
+	attenuation += getLambert(lightDirection, uLightCol[0], uLightSz[0]);
+	specular += getSpecular(lightDirection, uLightCol[0], uLightPos[0], uLightSz[0]);
+	
+
+	specular = specular * specular_map;
+	diffuse = attenuation * diffuse_map;
+
+//	rtFragColor = specular * diffuse * ambient;
+//	rtDiffuseMapSample = diffuse_map;
+//	rtSpecularMapSample = specular_map;
+//	rtDiffuseLightTotal = diffuse;
+//	rtSpecularLightTotal = specular;
+
+	rtDiffuseLight = diffuse;
+	rtSpecularLight = specular;
 }
