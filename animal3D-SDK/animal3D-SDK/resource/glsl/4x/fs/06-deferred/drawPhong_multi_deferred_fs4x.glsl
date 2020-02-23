@@ -70,14 +70,14 @@ vec4 cooridnate = texture(uImage03, vTexcoord.xy);
 
 vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
 {
-float diff = max(dot(texture(uImage02, vTexcoord.xy), lightDirection), 0.0);
+float diff = max(dot(normal, lightDirection), 0.0);
 return diff * lightColor * lightSize/100;
 }
 
 vec4 getSpecular(vec4 lightDirection, vec4 lightColor, vec4 lightPosition, float lightSize)
 {
-vec4 viewDirection = normalize(-texture(uImage01, vTexcoord.xy));
-vec4 reflectionDirection = reflect(-lightDirection, texture(uImage02, vTexcoord.xy));
+vec4 viewDirection = normalize(-viewPosition);
+vec4 reflectionDirection = reflect(-lightDirection, normal);
 float spec = pow(max(dot(viewDirection, reflectionDirection), 0.0), 4);
 vec4 specular = spec * lightColor * lightSize/100;
 return specular;
@@ -86,8 +86,8 @@ return specular;
 
 void main()
 {
-	vec4 diffuse_map = texture(uImage04, vTexcoord.xy);
-	vec4 specular_map = texture(uImage05, vTexcoord.xy);
+	vec4 diffuse_map = texture(uImage05, cooridnate.xy);
+	vec4 specular_map = texture(uImage05, cooridnate.xy);
 	vec4 ambient = uColor * 0.01;
 	vec4 lightDirection;
 	vec4 attenuation;
@@ -96,7 +96,7 @@ void main()
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-	lightDirection = normalize(uLightPos[i] - texture(uImage01, vTexcoord.xy));
+	lightDirection = normalize(uLightPos[i] - viewPosition);
 	attenuation += getLambert(lightDirection, uLightCol[i], uLightSz[i]);
 	specular += getSpecular(lightDirection, uLightCol[i], uLightPos[i], uLightSz[i]);
 	}

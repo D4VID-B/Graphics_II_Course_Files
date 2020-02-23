@@ -46,18 +46,32 @@ layout (location = 7) out vec4 rtSpecularLight;
 uniform sampler2D uImage01;
 uniform sampler2D uImage02;
 uniform sampler2D uImage03;
+uniform sampler2D uImage04;
+uniform sampler2D uImage05;
+
+uniform ubPointLight
+{
+	vec4 worldPos;
+	vec4 viewPos;
+	vec4 color;
+	float radius;
+	float radiusInvSq;
+	float[2] pad;
+
+} lightData;
 
 
-uniform vec4 uLightPos[4];
+//uniform vec4 uLightPos[4];
 uniform vec4 uLightCol[4];
 uniform float uLightSz[4];
 uniform int uLightCt;
 uniform vec4 uColor;
 
-in vec4 viewPosition;
-in vec4 normal;
 in vec4 vTexcoord;
 
+vec4 viewPosition = texture(uImage01, vTexcoord.xy);
+vec4 normal = texture(uImage02, vTexcoord.xy);
+vec4 coordinate = texture(uImage03, vTexcoord.xy);
 
 vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
 {
@@ -77,8 +91,8 @@ return specular;
 
 void main()
 {
-	vec4 diffuse_map = texture(, vTexcoord.xy);
-	vec4 specular_map = texture(, vTexcoord.xy);
+	vec4 diffuse_map = texture(uImage04, coordinate.xy);
+	vec4 specular_map = texture(uImage05, coordinate.xy);
 	vec4 ambient = uColor * 0.01;
 	vec4 lightDirection;
 	vec4 attenuation;
@@ -86,9 +100,9 @@ void main()
 	vec4 diffuse;
 
 	
-	lightDirection = normalize(texture(uImage03, vTexcoord.xy) - viewPosition);
-	attenuation += getLambert(lightDirection, texture(uImage03, vTexcoord.xy), uLightSz[0]);
-	specular += getSpecular(lightDirection, texture(uImage03, vTexcoord.xy), texture(uImage03, vTexcoord.xy), uLightSz[0]);
+	lightDirection = normalize(normal - viewPosition);
+	attenuation += getLambert(lightDirection, lightData.viewPos, lightData.radius);
+	specular += getSpecular(lightDirection, lightData.color, lightData.viewPos, lightData.radius);
 	
 
 	specular = specular * specular_map;
