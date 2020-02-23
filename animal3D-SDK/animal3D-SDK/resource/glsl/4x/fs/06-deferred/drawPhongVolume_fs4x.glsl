@@ -47,8 +47,7 @@ uniform sampler2D uImage01;
 uniform sampler2D uImage02;
 uniform sampler2D uImage03;
 
-uniform sampler2D uTex_dm;
-uniform sampler2D uTex_sm;
+
 uniform vec4 uLightPos[4];
 uniform vec4 uLightCol[4];
 uniform float uLightSz[4];
@@ -78,8 +77,8 @@ return specular;
 
 void main()
 {
-	vec4 diffuse_map = texture(uTex_dm, vTexcoord.xy);
-	vec4 specular_map = texture(uTex_sm, vTexcoord.xy);
+	vec4 diffuse_map = texture(, vTexcoord.xy);
+	vec4 specular_map = texture(, vTexcoord.xy);
 	vec4 ambient = uColor * 0.01;
 	vec4 lightDirection;
 	vec4 attenuation;
@@ -87,9 +86,9 @@ void main()
 	vec4 diffuse;
 
 	
-	lightDirection = normalize(uLightPos[0] - viewPosition);
-	attenuation += getLambert(lightDirection, uLightCol[0], uLightSz[0]);
-	specular += getSpecular(lightDirection, uLightCol[0], uLightPos[0], uLightSz[0]);
+	lightDirection = normalize(texture(uImage03, vTexcoord.xy) - viewPosition);
+	attenuation += getLambert(lightDirection, texture(uImage03, vTexcoord.xy), uLightSz[0]);
+	specular += getSpecular(lightDirection, texture(uImage03, vTexcoord.xy), texture(uImage03, vTexcoord.xy), uLightSz[0]);
 	
 
 	specular = specular * specular_map;
