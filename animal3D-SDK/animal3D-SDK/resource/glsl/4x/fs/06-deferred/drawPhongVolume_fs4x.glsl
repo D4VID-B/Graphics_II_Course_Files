@@ -36,8 +36,8 @@
 //			-> use expanded normal once sampled from normal g-buffer
 //			-> do not use texture coordinate g-buffer
 
-in vec4 vBiasedClipCoord;
 flat in int vInstanceID;
+in vec4 vBiasedClipCoord;
 
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
@@ -49,64 +49,78 @@ uniform sampler2D uImage03;
 uniform sampler2D uImage04;
 uniform sampler2D uImage05;
 
-uniform ubPointLight
+struct data
 {
-	vec4 worldPos;
+vec4 worldPos;
 	vec4 viewPos;
 	vec4 color;
 	float radius;
 	float radiusInvSq;
 	float[2] pad;
 
+};
+
+uniform ubPointLight
+{
+	data lightStuff[4];
+
 } lightData;
 
 
 //uniform vec4 uLightPos[4];
-uniform vec4 uLightCol[4];
-uniform float uLightSz[4];
+//uniform vec4 uLightCol[4];
+//uniform float uLightSz[4];
 uniform int uLightCt;
 uniform vec4 uColor;
+uniform mat4 uPB_inv;
 
-in vec4 vTexcoord;
+uniform sampler2D uImage00; //Depth
 
-vec4 viewPosition = texture(uImage01, vTexcoord.xy);
-vec4 normal = texture(uImage02, vTexcoord.xy);
-vec4 coordinate = texture(uImage03, vTexcoord.xy);
 
-vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
+
+
+
+vec4 getLambert(vec4 lightDirection, vec4 normal, vec4 lightColor, float lightSize)
 {
-float diff = max(dot(normal, lightDirection), 0.0);
-return diff * lightColor * lightSize/100;
+	float diff = max(dot(normal, lightDirection), 0.0);
+	return diff * lightColor;
 }
 
-vec4 getSpecular(vec4 lightDirection, vec4 lightColor, vec4 lightPosition, float lightSize)
+vec4 getSpecular(vec4 lightDirection, vec4 viewPosition, vec4 normal, vec4 lightColor, vec4 lightPosition, float lightSize)
 {
-vec4 viewDirection = normalize(-viewPosition);
-vec4 reflectionDirection = reflect(-lightDirection, normal);
-float spec = pow(max(dot(viewDirection, reflectionDirection), 0.0), 4);
-vec4 specular = spec * lightColor * lightSize/100;
-return specular;
+	vec4 viewDirection = normalize(-viewPosition);
+	vec4 reflectionDirection = reflect(-lightDirection, normal);
+	float spec = pow(max(dot(viewDirection, reflectionDirection), 0), 4);
+	vec4 specular = spec * lightColor;
+	return specular;
 }
 
 
 void main()
 {
-	vec4 diffuse_map = texture(uImage04, coordinate.xy);
-	vec4 specular_map = texture(uImage05, coordinate.xy);
+
 	vec4 ambient = uColor * 0.01;
 	vec4 lightDirection;
 	vec4 attenuation;
 	vec4 specular;
 	vec4 diffuse;
 
-	
-	lightDirection = normalize(normal - viewPosition);
-	attenuation += getLambert(lightDirection, lightData.viewPos, lightData.radius);
-	specular += getSpecular(lightDirection, lightData.color, lightData.viewPos, lightData.radius);
-	
+	vec4 biasCoord = vBiasedClipCoord / vBiasedClipCoord.a;
 
-	specular = specular * specular_map;
-	diffuse = attenuation * diffuse_map;
+	float depth = texture(uImage00, biasCoord.xy).x;
+	vec4 rawPosition = vec4(biasCoord.xy, depth, 1.0);
+	vec4 reverseProjPosition = uPB_inv * rawPosition; //Do reverse projection
+	reverseProjPosition = reverseProjPosition / reverseProjPosition.a; //Perspective Devide
+
+	vec4 normal = texture(uImage02, biasCoord.xy);
+	vec4 remappedNormal = (normal) * 2 - 1;
+
+	
+	lightDirection = normalize(normal - reverseProjPosition);
+	attenuation = getLambert(lightDirection, normal, lightData.lightStuff[vInstanceID].color, lightData.lightStuff[vInstanceID].radius);
+	specular = getSpecular(lightDirection, reverseProjPosition, normal, lightData.lightStuff[vInstanceID].color, lightData.lightStuff[vInstanceID].viewPos, lightData.lightStuff[vInstanceID].radius);
+	
+	diffuse = attenuation;
 
 //	rtFragColor = specular * diffuse * ambient;
 //	rtDiffuseMapSample = diffuse_map;
@@ -114,6 +128,12 @@ void main()
 //	rtDiffuseLightTotal = diffuse;
 //	rtSpecularLightTotal = specular;
 
-	rtDiffuseLight = diffuse;
-	rtSpecularLight = specular;
+	//diffuse *= 255;
+	rtDiffuseLight = vec4(diffuse.xyz, 1.0);
+	rtSpecularLight = vec4(specular.xyz, 1.0);
+
+	//rtDiffuseLight += vec4(1.0, 1.0, 0.0, 1.0);
+	//rtSpecularLight += vec4(1.0, 0.0, 1.0, 1.0);
+
+	
 }
