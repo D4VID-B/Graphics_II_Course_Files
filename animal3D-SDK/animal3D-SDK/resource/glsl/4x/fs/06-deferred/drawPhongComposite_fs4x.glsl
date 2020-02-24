@@ -58,12 +58,19 @@ uniform vec4 uColor;
 void main()
 {
 	vec4 coord = texture(uImage03, vTexcoord.xy);
-	vec4 diffuseSample;
-	vec4 specularSample;
 
-	vec4 phongComp = uColor;
+	vec4 diffuseSample = texture(uImage04, coord.xy);
+	vec4 specularSample = texture(uImage05, coord.xy);
+
+	vec4 diffuseLight = texture(uImage01, vTexcoord.xy);
+	vec4 specularLight = texture(uImage01, vTexcoord.xy);
+
+	vec4 phongComp = (diffuseLight * diffuseSample) + (specularLight * specularSample);
+
+	phongComp.a = diffuseSample.a;
 
 	rtFragColor = phongComp;
+	//rtFragColor = diffuseSample;
 	rtDiffuseMapSample = diffuseSample;
 	rtSpecularMapSample = specularSample;
 }
