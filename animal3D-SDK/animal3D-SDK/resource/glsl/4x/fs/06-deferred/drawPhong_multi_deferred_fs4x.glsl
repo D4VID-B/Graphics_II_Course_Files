@@ -40,6 +40,9 @@
 
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtViewNormal;
+layout (location = 3) out vec4 rtAtlasTexcoord;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
@@ -60,33 +63,35 @@ uniform vec4 uLightCol[4];
 uniform float uLightSz[4];
 uniform int uLightCt;
 uniform vec4 uColor;
+uniform mat4 uPB_inv;
 
 in vec4 vTexcoord;
 
-vec4 viewPosition = texture(uImage01, vTexcoord.xy);
-vec4 normal = texture(uImage02, vTexcoord.xy);
-vec4 cooridnate = texture(uImage03, vTexcoord.xy);
+//vec4 viewPosition = texture(uImage01, vTexcoord.xy);
 
 
-vec4 getLambert(vec4 lightDirection, vec4 lightColor, float lightSize)
+
+vec4 getLambert(vec4 lightDirection, vec4 normal, vec4 lightColor, float lightSize)
 {
-float diff = max(dot(normal, lightDirection), 0.0);
-return diff * lightColor * lightSize/100;
+	float diff = max(dot(normal, lightDirection), 0.0);
+	return diff * lightColor * lightSize/100;
 }
 
-vec4 getSpecular(vec4 lightDirection, vec4 lightColor, vec4 lightPosition, float lightSize)
+vec4 getSpecular(vec4 lightDirection, vec4 viewPosition, vec4 normal, vec4 lightColor, vec4 lightPosition, float lightSize)
 {
-vec4 viewDirection = normalize(-viewPosition);
-vec4 reflectionDirection = reflect(-lightDirection, normal);
-float spec = pow(max(dot(viewDirection, reflectionDirection), 0.0), 4);
-vec4 specular = spec * lightColor * lightSize/100;
-return specular;
+	vec4 viewDirection = normalize(-viewPosition);
+	vec4 reflectionDirection = reflect(-lightDirection, normal);
+	float spec = pow(max(dot(viewDirection, reflectionDirection), 0), 4);
+	vec4 specular = spec * lightColor * lightSize/100;
+	return specular;
 }
 
 
 void main()
 {
-	vec4 diffuse_map = texture(uImage05, cooridnate.xy);
+
+	vec4 cooridnate = texture(uImage03, vTexcoord.xy);
+	vec4 diffuse_map = texture(uImage04, cooridnate.xy);
 	vec4 specular_map = texture(uImage05, cooridnate.xy);
 	vec4 ambient = uColor * 0.01;
 	vec4 lightDirection;
@@ -94,19 +99,31 @@ void main()
 	vec4 specular;
 	vec4 diffuse;
 
+
+	float depth = texture(uImage00, vTexcoord.xy).x;
+	vec4 rawPosition = vec4(vTexcoord.xy, depth, 1.0);
+	vec4 reverseProjPosition = uPB_inv * rawPosition; //Do reverse projection
+	reverseProjPosition = reverseProjPosition / reverseProjPosition.a; //Perspective Devide
+
+	vec4 normal = texture(uImage02, vTexcoord.xy);
+	vec4 remappedNormal = (normal) * 2 - 1;
+
 	for(int i = 0; i < uLightCt; i++)
 	{
-	lightDirection = normalize(uLightPos[i] - viewPosition);
-	attenuation += getLambert(lightDirection, uLightCol[i], uLightSz[i]);
-	specular += getSpecular(lightDirection, uLightCol[i], uLightPos[i], uLightSz[i]);
+		lightDirection = normalize(uLightPos[i] - reverseProjPosition);
+		attenuation += getLambert(lightDirection, remappedNormal, uLightCol[i], uLightSz[i]);
+		specular += getSpecular(lightDirection, reverseProjPosition, remappedNormal, uLightCol[i], uLightPos[i], uLightSz[i]);
 	}
 
-	specular = specular * specular_map;
-	diffuse = attenuation * diffuse_map;
 
-	rtFragColor = specular * diffuse * ambient;
-	rtDiffuseMapSample = diffuse_map;
-	rtSpecularMapSample = specular_map;
-	rtDiffuseLightTotal = diffuse;
-	rtSpecularLightTotal = specular;
+	rtFragColor =  vec4((specular * specular_map + attenuation * diffuse_map + ambient).xyz, diffuse_map.a);
+
+	rtDiffuseMapSample = vec4(diffuse_map.xyz,1.0);
+	rtSpecularMapSample = vec4(specular_map.xyz, 1.0);
+	rtDiffuseLightTotal = vec4(attenuation.xyz, 1.0);
+	rtSpecularLightTotal = vec4(specular.xyz, 1.0);
+
+	rtViewPosition = reverseProjPosition;
+	rtViewNormal = vec4(normalize(normal).xyz , 1.0);
+	rtAtlasTexcoord = vec4(cooridnate.xyz, 1.0);
 }
