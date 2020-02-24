@@ -42,10 +42,28 @@ layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
 
+uniform sampler2D uImage00;
+uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+uniform sampler2D uImage04;
+uniform sampler2D uImage05;
+uniform sampler2D uImage06;
+uniform sampler2D uImage07;
+
+uniform vec4 uColor;
+
+
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE YELLOW (and others)
-	rtFragColor = vec4(1.0, 1.0, 0.0, 1.0);
-	rtDiffuseMapSample = vec4(1.0, 0.0, 0.0, 1.0);
-	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
+	vec4 coord = texture(uImage03, vTexcoord.xy);
+	vec4 diffuseSample;
+	vec4 specularSample;
+
+	vec4 phongComp = uColor;
+
+	rtFragColor = phongComp;
+	rtDiffuseMapSample = diffuseSample;
+	rtSpecularMapSample = specularSample;
 }
