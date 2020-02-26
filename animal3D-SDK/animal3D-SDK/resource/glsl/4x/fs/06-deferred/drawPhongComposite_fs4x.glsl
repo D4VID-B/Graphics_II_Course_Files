@@ -63,7 +63,7 @@ void main()
 	vec4 specularSample = texture(uImage05, coord.xy);
 
 	vec4 diffuseLight = texture(uImage01, vTexcoord.xy);
-	vec4 specularLight = texture(uImage01, vTexcoord.xy);
+	vec4 specularLight = texture(uImage02, vTexcoord.xy);
 
 	vec4 phongComp = (diffuseLight * diffuseSample) + (specularLight * specularSample);
 
