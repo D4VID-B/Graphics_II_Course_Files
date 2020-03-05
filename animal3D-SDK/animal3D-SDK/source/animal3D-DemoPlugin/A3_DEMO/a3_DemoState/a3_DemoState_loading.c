@@ -835,6 +835,9 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampDM[1];
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
+			a3_DemoStateTexture texEarthLM[1];
+			a3_DemoStateTexture texSkyStars[1];
+
 		};
 	} textureList = {
 		{
@@ -850,6 +853,9 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
+			{ demoState->tex_earth_lm,		"tex:earth-lm",		"../../../../resource/tex/earth/2k/earth_lm_2k.png"},
+			{ demoState->tex_skybox_stars,			"tex:stars",		"../../../../resource/tex/bg/sky_stars.png" },
+			//{demoState-> tex_sequan, "", ""},
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);

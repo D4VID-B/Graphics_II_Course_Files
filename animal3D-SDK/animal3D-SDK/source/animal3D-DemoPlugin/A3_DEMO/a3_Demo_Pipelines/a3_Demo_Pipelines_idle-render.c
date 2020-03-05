@@ -228,14 +228,14 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	// temp texture pointers
 	const a3_Texture* texture_dm[] = {
 		demoState->tex_stone_dm,
-		demoState->tex_earth_dm,
+		demoState->tex_earth_lm,
 		demoState->tex_stone_dm,
 		demoState->tex_mars_dm,
 		demoState->tex_checker,
 	};
 	const a3_Texture* texture_sm[] = {
 		demoState->tex_stone_dm,
-		demoState->tex_earth_sm,
+		demoState->tex_earth_lm,
 		demoState->tex_stone_dm,
 		demoState->tex_mars_sm,
 		demoState->tex_checker,
@@ -458,7 +458,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		// activate shadow map and other relevant textures
 		currentReadFBO = demoState->fbo_shadow_d32;
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+		a3textureActivate(demoState->tex_earth_lm, a3tex_unit07);
 
 		// send more common uniforms
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
@@ -575,7 +575,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// composite skybox
 	currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
-	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
+	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_water, skyblue);
 	a3demo_enableCompositeBlending();
 
 	// draw textured quad with previous pass image on it
