@@ -145,6 +145,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		demoState->skeletonObject->position = demoState->curveWaypoint[0].xyz;
 	}
 
+	
 
 	// update animation: 
 	//	-> copy pose from set to state (pro tip: seems pointless but it is not)
@@ -214,6 +215,18 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		// send hierarchical info
 		a3bufferRefill(demoState->ubo_hierarchy, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
 	}
+
+	//Animating the skeleton
+	if (demoMode->editingJoint == false)
+	{
+		//interpolate between poses untill user switches
+		//demoState->hierarchyState_skel->poseGroup[1]->objectSpace <-> demoState->hierarchyState_skel->poseGroup[0]->objectSpace;
+
+		demoState->hierarchyState_skel->localPose[1].nodePose->translation;
+		//demoState->hierarchyState_skel->poseGroup[0] ...;
+
+	}
+
 }
 
 

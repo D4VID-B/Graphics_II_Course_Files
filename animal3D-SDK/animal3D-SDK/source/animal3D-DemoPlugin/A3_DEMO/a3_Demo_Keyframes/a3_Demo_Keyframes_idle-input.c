@@ -103,6 +103,7 @@ void a3keyframesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Key
 	switch (asciiKey)
 	{
 	case '0':
+		//Add automatic animation between the 2 key poses
 		demoMode->editingJoint = !demoMode->editingJoint;
 		break;
 
