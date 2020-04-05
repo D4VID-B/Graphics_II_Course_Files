@@ -1354,6 +1354,7 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	//	-> set up additional poses
 
 	// Second key pose: Upper body dab
+	//p = 0;
 	p = 1;
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:root");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
