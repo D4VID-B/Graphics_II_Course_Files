@@ -1203,7 +1203,7 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	demoState->demoMode_keyframes->editSkeletonIndex = 0;
 	hierarchy = demoState->hierarchy_skel + demoState->demoMode_keyframes->editSkeletonIndex;
 	hierarchyPoseGroup = demoState->hierarchyPoseGroup_skel + demoState->demoMode_keyframes->editSkeletonIndex;
-	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, 1);
+	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, 2);
 	hierarchyPoseFlag = demoState->hierarchyPoseFlag_skel[demoState->demoMode_keyframes->editSkeletonIndex];
 
 	// define "bind pose" or the initial transformation 
@@ -1239,9 +1239,9 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
 	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, +90.0f, 0.0f, a3true);
 	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.1f, +0.1f, 0.0f);
-//	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
-//	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
-//	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
 
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulderblade_r");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
@@ -1354,11 +1354,10 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	//	-> set up additional poses
 
 	// Second key pose: Upper body dab
-	//p = 0;
 	p = 1;
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:root");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
-	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, 0.0, +3.6f);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 10.0f, 0.0, +3.6f);
 	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:spine_lower");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
@@ -1386,9 +1385,9 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
 	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, +90.0f, 0.0f, a3true);
 	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.1f, +0.1f, 0.0f);
-	//	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
-	//	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
-	//	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
 
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulderblade_r");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;

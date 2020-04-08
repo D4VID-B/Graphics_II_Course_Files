@@ -41,6 +41,7 @@
 
 void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3f64 dt)
 {
+	
 	a3ui32 i, j;
 
 	const a3_DemoProjector* activeCamera = demoState->projector + demoState->activeCamera;
@@ -216,6 +217,25 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		a3bufferRefill(demoState->ubo_hierarchy, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
 	}
 
+
+	if (!demoMode->editingJoint) {
+		for (i = 0; i < currentHierarchy->numNodes; ++i)
+		{
+			//a3_HierarchyNode node = currentHierarchy->nodes[i];
+			//a3_HierarchyNodePose test = demoState->hierarchyState_skel->localPose->nodePose[i];
+
+			a3vec4 currentPosition = demoState->hierarchyState_skel->localPose[i].nodePose->translation;
+			a3vec4 lastPosition = demoState->hierarchyState_skel->poseGroup[0].pose->nodePose->translation;
+			a3vec4 nextPosition = demoState->hierarchyState_skel->poseGroup[1].pose->nodePose->translation;
+
+			a3real4Lerp(currentPosition.v, lastPosition.v, nextPosition.v, .5);
+
+
+			//demoState->hierarchyState_skel->objectSpace->transform[i].m = a3mat4_identity;
+			test.orientation;
+			node.name;
+		}
+	}
 	//Animating the skeleton
 	//if (demoMode->editingJoint == false)
 	//{

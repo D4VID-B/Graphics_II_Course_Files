@@ -172,38 +172,42 @@ void a3keyframes_render_controls(a3_DemoState const* demoState, a3_Demo_Keyframe
 		"        Interpolation data: PARAM %.3f = %.3f / %.3f; SEGMENT %u / %u", (a3f32)demoState->segmentParam, (a3f32)demoState->segmentTime, (a3f32)demoState->segmentDuration, (a3ui32)demoState->segmentIndex + 1, (a3ui32)demoState->segmentCount);
 
 	// editing controls
+	
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"EDIT JOINTS (toggle '0') %d", demoMode->editingJoint);
-	if (demoMode->editingJoint)
-	{
-		const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
-		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel[demoMode->editSkeletonIndex][demoMode->editJointIndex];
+		if (demoMode->editingJoint)
+		{
+			const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
+			const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel[demoMode->editSkeletonIndex][demoMode->editJointIndex];
 
-		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-			"    Editing joint %d / %d ( '8' prev | next '9' )", demoMode->editJointIndex + 1, demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes);
-		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-			"    Joint name: '%s'", demoState->hierarchy_skel[demoMode->editSkeletonIndex].nodes[demoMode->editJointIndex].name);
-		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-			"    Edit DOFs: ");
-		if (currentPoseFlag & a3poseFlag_rotate)
-		{
 			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        orientation_x ('1' | '!'): %f", currentNodePose->orientation.x);
+				"    Editing joint %d / %d ( '8' prev | next '9' )", demoMode->editJointIndex + 1, demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes);
 			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        orientation_y ('2' | '@'): %f", currentNodePose->orientation.y);
+				"    Joint name: '%s'", demoState->hierarchy_skel[demoMode->editSkeletonIndex].nodes[demoMode->editJointIndex].name);
 			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        orientation_z ('3' | '#'): %f", currentNodePose->orientation.z);
+				"    Edit DOFs: ");
+			if (currentPoseFlag & a3poseFlag_rotate)
+			{
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        orientation_x ('1' | '!'): %f", currentNodePose->orientation.x);
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        orientation_y ('2' | '@'): %f", currentNodePose->orientation.y);
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        orientation_z ('3' | '#'): %f", currentNodePose->orientation.z);
+			}
+			if (currentPoseFlag & a3poseFlag_translate)
+			{
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        translation_x ('4' | '$'): %f", currentNodePose->translation.x);
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        translation_y ('5' | '%%'): %f", currentNodePose->translation.y);
+				a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+					"        translation_z ('6' | '^'): %f", currentNodePose->translation.z);
+			}
 		}
-		if (currentPoseFlag & a3poseFlag_translate)
-		{
-			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        translation_x ('4' | '$'): %f", currentNodePose->translation.x);
-			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        translation_y ('5' | '%%'): %f", currentNodePose->translation.y);
-			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-				"        translation_z ('6' | '^'): %f", currentNodePose->translation.z);
-		}
-	}
+	
+
+	
 }
 
 

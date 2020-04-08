@@ -106,7 +106,7 @@ void a3keyframesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Key
 		//Add automatic animation between the 2 key poses
 		demoMode->editingJoint = !demoMode->editingJoint;
 		break;
-
+	
 	case '9':
 		if (demoMode->editingJoint)
 			demoMode->editJointIndex = (demoMode->editJointIndex + 1) % demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes;
