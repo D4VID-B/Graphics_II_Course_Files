@@ -193,7 +193,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 
 			a3real4Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, thisNode.translation.v, thisNextNode.translation.v, demoState->animationParam);
 			a3real4Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, thisNode.orientation.v, thisNextNode.orientation.v, demoState->animationParam);
-			a3real4Lerp(currentHierarchyState->localPose->nodePose[i].scale.v, thisNode.scale.v, thisNextNode.scale.v, demoState->segmentParam);
+			a3real4Lerp(currentHierarchyState->localPose->nodePose[i].scale.v, thisNode.scale.v, thisNextNode.scale.v, demoState->animationParam);
 		}
 	}
 
