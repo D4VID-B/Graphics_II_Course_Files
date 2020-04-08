@@ -228,36 +228,24 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 			demoState->currentPose = (demoState->currentPose + 1) % 2; //TODO: Replace with var representing number of poses
 		}
 
-		/*
-		for (i = 0; i < currentHierarchy->numNodes; ++i)
-		{
-
-			//Set to loop through poses 
-			if (demoState->segmentParam > .999) { //Segment param is the wrong thing to be using. What is the right thing?
-				demoState->currentPose = (demoState->currentPose + 1) % 2; //TODO: Replace with var representing number of poses
-			}
+		
+		//for (i = 0; i < currentHierarchy->numNodes; ++i)
+		for (i = 0; i < 32; ++i)
+		{			
 			
-			
+			a3integer currentPose = demoState->currentPose;
 			a3integer nextPose = (demoState->currentPose + 1) % 2;
 
 		
-			//a3vec4 currentPosition = demoState->hierarchyState_skel->localPose[i].nodePose->translation;
-			a3vec4 * lastPosition = &(currentHierarchyPoseGroup)->pose[demoState->currentPose].nodePose->translation;
-			a3vec4* nextPosition = &(currentHierarchyPoseGroup)->pose[nextPose].nodePose->translation;
+			/*a3vec4*/a3real* lastPosition = &(currentHierarchyPoseGroup)->pose[demoState->currentPose].nodePose->translation.w;
+			/*a3vec4*/a3real * nextPosition = &(currentHierarchyPoseGroup)->pose[nextPose].nodePose->translation.w;
 
 			//a3vec4* position0 =  demoState->hierarchyState_skel->poseGroup[1]->objectSpace
-
-			//a3mat4 test = demoState->hierarchyState_skel->poseGroup[1]->objectSpace;
 
 
 			a3real4Lerp(lastPosition, lastPosition, nextPosition, demoState->segmentParam);
 
-			a3hierarchyPoseCopy(currentHierarchyState->localPose,
-				currentHierarchyPoseGroup->pose + demoState->currentPose, currentHierarchy->numNodes);
-			a3hierarchyPoseConvert(currentHierarchyState->localSpace,
-				currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
-			a3kinematicsSolveForward(demoState->hierarchyState_skel);
-		}*/
+		}
 	}
 	//Animating the skeleton
 	//if (demoMode->editingJoint == false)
@@ -265,6 +253,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	//	//interpolate between poses untill user switches
 	//	//demoState->hierarchyState_skel->poseGroup[1]->objectSpace <-> demoState->hierarchyState_skel->poseGroup[0]->objectSpace;
 
+	//	//something, but idk what
 	//	demoState->hierarchyState_skel->localPose[1].nodePose->translation;
 	//	//demoState->hierarchyState_skel->poseGroup[0] ...;
 
