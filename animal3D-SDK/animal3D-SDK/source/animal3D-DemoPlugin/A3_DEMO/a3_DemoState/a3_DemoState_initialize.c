@@ -252,6 +252,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 	// animation
 	demoState->segmentDuration = a3real_four;
 	demoState->segmentDurationInv = a3recip(demoState->segmentDuration);
+
 	demoState->segmentCount = 4;
 	a3real4SetReal3W(demoState->curveWaypoint[0].v, demoState->sphereObject->position.v, a3real_one);
 	a3real4SetReal3W(demoState->curveWaypoint[1].v, demoState->cylinderObject->position.v, a3real_one);
