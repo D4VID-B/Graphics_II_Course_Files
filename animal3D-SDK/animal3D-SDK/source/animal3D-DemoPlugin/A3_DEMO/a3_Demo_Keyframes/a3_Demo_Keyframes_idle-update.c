@@ -263,6 +263,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	//	//interpolate between poses untill user switches
 	//	//demoState->hierarchyState_skel->poseGroup[1]->objectSpace <-> demoState->hierarchyState_skel->poseGroup[0]->objectSpace;
 
+	//	//something, but idk what
 	//	demoState->hierarchyState_skel->localPose[1].nodePose->translation;
 	//	//demoState->hierarchyState_skel->poseGroup[0] ...;
 
