@@ -158,7 +158,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
 
 	a3hierarchyPoseCopy(currentHierarchyState->localPose,
-		currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
+		currentHierarchyPoseGroup->pose + demoState->currentPose, currentHierarchy->numNodes);
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel);
@@ -217,24 +217,47 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		a3bufferRefill(demoState->ubo_hierarchy, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
 	}
 
-
+	//Should animate
 	if (!demoMode->editingJoint) {
+
+
+		demoState->segmentTime += (a3real)dt;
+
+
+		if (demoState->segmentParam > .999) { //Segment param is the wrong thing to be using. What is the right thing?
+			demoState->currentPose = (demoState->currentPose + 1) % 2; //TODO: Replace with var representing number of poses
+		}
+
+		/*
 		for (i = 0; i < currentHierarchy->numNodes; ++i)
 		{
-			//a3_HierarchyNode node = currentHierarchy->nodes[i];
-			//a3_HierarchyNodePose test = demoState->hierarchyState_skel->localPose->nodePose[i];
 
-			a3vec4 currentPosition = demoState->hierarchyState_skel->localPose[i].nodePose->translation;
-			a3vec4 lastPosition = demoState->hierarchyState_skel->poseGroup[0].pose->nodePose->translation;
-			a3vec4 nextPosition = demoState->hierarchyState_skel->poseGroup[1].pose->nodePose->translation;
+			//Set to loop through poses 
+			if (demoState->segmentParam > .999) { //Segment param is the wrong thing to be using. What is the right thing?
+				demoState->currentPose = (demoState->currentPose + 1) % 2; //TODO: Replace with var representing number of poses
+			}
+			
+			
+			a3integer nextPose = (demoState->currentPose + 1) % 2;
 
-			a3real4Lerp(currentPosition.v, lastPosition.v, nextPosition.v, .5);
+		
+			//a3vec4 currentPosition = demoState->hierarchyState_skel->localPose[i].nodePose->translation;
+			a3vec4 * lastPosition = &(currentHierarchyPoseGroup)->pose[demoState->currentPose].nodePose->translation;
+			a3vec4* nextPosition = &(currentHierarchyPoseGroup)->pose[nextPose].nodePose->translation;
+
+			//a3vec4* position0 =  demoState->hierarchyState_skel->poseGroup[1]->objectSpace
+
+			//a3mat4 test = demoState->hierarchyState_skel->poseGroup[1]->objectSpace;
 
 
-			//demoState->hierarchyState_skel->objectSpace->transform[i].m = a3mat4_identity;
-			test.orientation;
-			node.name;
-		}
+			a3real4Lerp(lastPosition, lastPosition, nextPosition, demoState->segmentParam);
+
+			a3hierarchyPoseCopy(currentHierarchyState->localPose,
+				currentHierarchyPoseGroup->pose + demoState->currentPose, currentHierarchy->numNodes);
+			a3hierarchyPoseConvert(currentHierarchyState->localSpace,
+				currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
+			a3kinematicsSolveForward(demoState->hierarchyState_skel);
+		}*/
 	}
 	//Animating the skeleton
 	//if (demoMode->editingJoint == false)

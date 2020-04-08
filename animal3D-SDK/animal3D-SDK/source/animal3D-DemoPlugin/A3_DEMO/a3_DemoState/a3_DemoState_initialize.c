@@ -282,6 +282,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 		demoState->skeletonObject->euler.z = +180.0f;
 	}
 
+	demoState->currentPose = 0;
 
 	// demo modes
 	a3shading_init(demoState, demoState->demoMode_shading);
